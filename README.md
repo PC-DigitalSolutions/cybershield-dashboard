@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CyberShield AI — Dashboard 🦅🛡️
 
-## Getting Started
+**The live command center for CyberShield AI — real-time cyber-threat intelligence for the 2026 FIFA World Cup.**
 
-First, run the development server:
+A sleek, single-screen operations dashboard where fans and organizers can watch live World Cup threats roll in, see which specialist agent is handling each one, and tap to ask **El Guardián** (the AI security director) to explain any threat in plain language.
+
+> This is the **Next.js frontend**. It talks to the FastAPI backend at **[CyberShield_IV](https://github.com/PC-DigitalSolutions/CyberShield_IV)**.
+
+<!-- TODO: add a screenshot or GIF of the dashboard here — it's the strongest selling point -->
+<!-- ![CyberShield dashboard](docs/screenshot.png) -->
+
+---
+
+## What it does
+
+- **🌐 Live threat monitor** — auto-refreshing feed of real World Cup security news, each item tagged with severity, the responsible agent, and a plain-English **recommendation** the public can act on.
+- **⚡ Tap-to-ask El Guardián** — hit *Ask El Guardián* on any headline (or use the quick-ask chips) and the AI analyzes it live, engaging the right specialist agent.
+- **🥅 Live agent load bars** — see each of the four agents' real-time share of active threats (the Anti-Scammer Goalie usually leads — ticket-scam season).
+- **📊 Standings · Fixtures · News** — a clean tabbed panel with live group tables, upcoming matches, and a **CyberShield threat level** assessed for every fixture.
+- **📋 Today's threat briefing** — El Guardián summarizes the day's live threats on demand.
+
+---
+
+## Tech stack
+
+- **Next.js 16** + **React 19** (App Router, client console)
+- **Tailwind CSS v4** + **Framer Motion** (animations)
+- **lucide-react** icons
+- Talks to the CyberShield FastAPI backend via REST (polling: news 30s, matches 60s)
+
+---
+
+## Run it locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+By default it expects the backend at `http://127.0.0.1:8000`. To point at a deployed backend, set:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# .env.local  (or your host's env vars)
+NEXT_PUBLIC_API_BASE=https://your-backend-url
+```
 
-## Learn More
+> You'll want the [backend](https://github.com/PC-DigitalSolutions/CyberShield_IV) running too — it serves the live feed, match data, and El Guardián.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Full guide (Vercel + Render + custom `.tech` domain) in **[DEPLOYMENT.md](DEPLOYMENT.md)**. Short version:
 
-## Deploy on Vercel
+1. Import this repo into **Vercel** (Next.js auto-detected)
+2. Set `NEXT_PUBLIC_API_BASE` to your deployed backend URL
+3. Ship 🚀
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Design notes
+
+- Two-stage by design: the backend's monitoring runs free 24/7; the LLM only fires on user interaction — so the dashboard is always live without burning API quota.
+- Honest UX: where live data has gaps (e.g., the match feed has no host-city field), the UI says so rather than faking it.
+
+---
+
+Built by **PC Digital Solutions**. · *Strength. Vigilance. Intelligence.*
