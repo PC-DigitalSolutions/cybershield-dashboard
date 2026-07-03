@@ -33,3 +33,11 @@ body {
 .cs-ticker {
   animation: cs-ticker 45s linear infinite;
 }
+
+/* Hidden scrollbar — appears only on hover */
+.cs-scroll::-webkit-scrollbar { width: 3px; }
+.cs-scroll::-webkit-scrollbar-track { background: transparent; }
+.cs-scroll::-webkit-scrollbar-thumb { background: transparent; border-radius: 3px; transition: background 0.3s; }
+.cs-scroll:hover::-webkit-scrollbar-thumb { background: #1E3A8A66; }
+.cs-scroll { scrollbar-width: none; }
+.cs-scroll:hover { scrollbar-width: thin; scrollbar-color: #1E3A8A66 transparent; }

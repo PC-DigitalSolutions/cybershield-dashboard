@@ -43,3 +43,6 @@ next-env.d.ts
 # local agent/editor tooling & backups
 .claude/
 *.bak
+
+# internal business strategy docs (not for public repo)
+/docs/

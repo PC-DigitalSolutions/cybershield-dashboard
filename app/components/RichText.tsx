@@ -118,7 +118,7 @@ export default function RichText({ text }: { text: string }) {
   });
 
   return (
-    <div className="text-xs leading-relaxed space-y-1" style={{ color: TEXT }}>
+    <div className="text-[13px] leading-[1.7] space-y-1.5" style={{ color: TEXT }}>
       {blocks}
     </div>
   );

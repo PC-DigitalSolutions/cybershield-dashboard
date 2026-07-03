@@ -121,6 +121,11 @@ function kickoffLabel(utcDate: string | null): string {
 
 const GATE_TO_INDEX: Record<string, number> = { "Gate A": 0, "Gate B": 1, "Gate C": 2, "Gate D": 3 };
 
+const SIG_STRIP = /(?:^|\n).*(?:Strength[.\s]*Vigilance[.\s]*Intelligence|CyberShield AI\s*[—–-]\s*El Guardi[áa]n).*$/gis;
+function stripSignature(text: string): string {
+  return text.replace(SIG_STRIP, "").trim();
+}
+
 const AGENTS = [
   { name: "Anti-Scammer Goalie",  gate: "Gate A", icon: "🥅", color: T.babyBlue,   match: /scam|phish|fraud|ticket|link|fake|verify/i },
   { name: "Sideline Referee",     gate: "Gate B", icon: "⚖️",  color: "#7CB9E8",   match: /gdpr|compliance|data|privacy|transfer/i },
@@ -614,7 +619,7 @@ export default function CyberShieldCommandCenter() {
 
         {/* CENTER — flex-1 */}
         <Panel className="flex-1 flex flex-col min-w-0">
-          <div className="relative flex flex-col items-center justify-center h-full px-8 py-5 overflow-hidden">
+          <div className="relative flex flex-col items-center h-full px-8 py-3 overflow-y-auto cs-scroll">
 
             {/* Stadium pitch motif — center circle + halfway line */}
             <div className="absolute inset-0 pointer-events-none" aria-hidden>
@@ -687,7 +692,7 @@ export default function CyberShieldCommandCenter() {
                       <span className="text-[10px] leading-snug break-words" style={{ color: T.silver }}>{query}</span>
                     </div>
                   )}
-                  <div className="max-h-[140px] overflow-y-auto min-h-0 pr-1">
+                  <div className="max-h-[320px] overflow-y-auto min-h-0 pr-1 cs-scroll">
                     <AnimatePresence mode="wait">
                       {loading ? (
                         <motion.div key="load" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-xs" style={{ color: T.silverDim }}>
@@ -696,10 +701,14 @@ export default function CyberShieldCommandCenter() {
                         </motion.div>
                       ) : (
                         <motion.div key="resp" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
-                          <RichText text={response} />
+                          {agentReports.length > 0
+                            ? <RichText text={stripSignature(response)} />
+                            : <RichText text={response} />}
                           {agentReports.map((r, i) => {
                             const a = AGENTS[GATE_TO_INDEX[r.gate]];
                             if (!a) return null;
+                            const isLast = i === agentReports.length - 1;
+                            const cleanText = isLast ? r.response : stripSignature(r.response);
                             return (
                               <motion.div key={r.gate}
                                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
@@ -715,7 +724,7 @@ export default function CyberShieldCommandCenter() {
                                     REPORTING
                                   </span>
                                 </div>
-                                <RichText text={r.response} />
+                                <RichText text={cleanText} />
                               </motion.div>
                             );
                           })}
@@ -810,7 +819,7 @@ export default function CyberShieldCommandCenter() {
                     )}
                   </div>
                   {standings ? (
-                    <div className="flex-1 overflow-y-auto pr-1 space-y-4 min-h-0">
+                    <div className="flex-1 overflow-y-auto pr-1 cs-scroll space-y-4 min-h-0">
                       {standings.map(g => (
                         <div key={g.group}>
                           <div className="flex items-center gap-2 mb-1.5">
@@ -819,10 +828,10 @@ export default function CyberShieldCommandCenter() {
                             <span className="text-[8px] tracking-wider" style={{ color: T.silverDim }}>P&nbsp;&nbsp;PTS</span>
                           </div>
                           <div className="space-y-0.5">
-                            {g.table.map(r => {
+                            {g.table.map((r, i) => {
                               const adv = (r.position ?? 9) <= 2;
                               return (
-                                <div key={r.position} className="flex items-center gap-2 px-2 py-1.5 rounded-md"
+                                <div key={r.team.code || r.team.name || r.position || i} className="flex items-center gap-2 px-2 py-1.5 rounded-md"
                                   style={{ background: adv ? `${T.babyBlue}12` : "transparent" }}>
                                   <span className="w-4 text-center text-[11px] font-bold font-mono"
                                     style={{ color: adv ? T.babyBlue : T.silverDim }}>{r.position}</span>
@@ -856,7 +865,7 @@ export default function CyberShieldCommandCenter() {
                     <span className="text-[8px] tracking-[0.16em]" style={{ color: T.silverDim }}>CYBERSHIELD THREAT</span>
                   </div>
                   {upcoming ? (
-                    <div className="flex-1 overflow-y-auto pr-1 space-y-2 min-h-0">
+                    <div className="flex-1 overflow-y-auto pr-1 cs-scroll space-y-2 min-h-0">
                       {upcoming.slice(0, 8).map((m, i) => {
                         const lvl = m.threat?.level ?? "GUARDED";
                         const c = LEVEL_COLOR[lvl] ?? T.silverDim;
@@ -911,7 +920,7 @@ export default function CyberShieldCommandCenter() {
                   <div className="text-[9px] tracking-[0.14em] mb-3 flex-shrink-0" style={{ color: T.silverDim }}>
                     {threatFeed ? `LIVE · GOOGLE NEWS · ${threatFeed.total_seen} SCANNED` : "CONNECTING…"}
                   </div>
-                  <div className="flex-1 overflow-y-auto pr-1 space-y-3 min-h-0">
+                  <div className="flex-1 overflow-y-auto pr-1 cs-scroll space-y-3 min-h-0">
                     {threatFeed?.threats?.length ? threatFeed.threats.map(t => {
                       const isThreat = t.kind === "threat";
                       const c = isThreat ? (SEVERITY_COLOR[t.severity] ?? T.babyBlue) : T.babyBlue;
@@ -951,7 +960,7 @@ export default function CyberShieldCommandCenter() {
                             </button>
                             <a href={t.link} target="_blank" rel="noopener noreferrer"
                               className="px-2.5 py-1.5 rounded-md text-[9px] font-bold tracking-wide transition-colors hover:bg-white/5"
-                              style={{ border: `1px solid ${T.royalBlue}80`, color: T.silverDim }}>
+                              style={{ border: `1px solid ${T.neonGreen}60`, color: T.neonGreen }}>
                               READ ↗
                             </a>
                           </div>
