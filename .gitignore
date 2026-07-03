@@ -46,3 +46,6 @@ next-env.d.ts
 
 # internal business strategy docs (not for public repo)
 /docs/
+
+# stray local backend artifact
+/data/

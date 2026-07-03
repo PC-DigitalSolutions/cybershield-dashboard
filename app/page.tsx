@@ -186,8 +186,8 @@ const QUICK_ASKS = [
   { label: "📋 Today's threat briefing",   q: "Give me today's World Cup cyber threat briefing" },
 ];
 
-function Corner({ className = "" }: { className?: string }) {
-  return <span className={`absolute w-3 h-3 ${className}`} />;
+function Corner({ className = "", style }: { className?: string; style?: React.CSSProperties }) {
+  return <span className={`absolute w-3 h-3 ${className}`} style={style} />;
 }
 
 function BallDecal({ size = 70 }: { size?: number }) {
