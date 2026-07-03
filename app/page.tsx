@@ -98,6 +98,51 @@ const SEVERITY_COLOR: Record<string, string> = {
   INFO:     "#00CFFF",
 };
 
+type GoalieTurn = { role: "user" | "model"; text: string; matches?: number };
+type Story = { id: number; created: number; story: string; scam_type: string; language: string };
+type StoryFeed = {
+  stories: Story[];
+  total: number;
+  this_week: number;
+  scam_types: string[];
+  by_type: Record<string, number>;
+};
+
+const SCAM_TYPE_META: Record<string, { icon: string; label: string }> = {
+  romance:       { icon: "💔", label: "Romance" },
+  dating:        { icon: "💘", label: "Dating app" },
+  sugar:         { icon: "💸", label: "Sugar daddy/momma" },
+  sextortion:    { icon: "🔒", label: "Sextortion" },
+  tickets:       { icon: "🎫", label: "Tickets" },
+  phishing:      { icon: "🔗", label: "Phishing" },
+  smishing:      { icon: "📱", label: "Smishing" },
+  impersonation: { icon: "🎭", label: "Impersonation" },
+  crypto:        { icon: "🪙", label: "Crypto" },
+  marketplace:   { icon: "🛒", label: "Marketplace" },
+  jobs:          { icon: "💼", label: "Job offer" },
+  merch:         { icon: "👕", label: "Merch" },
+  travel:        { icon: "✈️", label: "Travel" },
+  other:         { icon: "⚠️", label: "Other" },
+};
+
+const GOALIE_GREETING =
+  "In the box and ready. Romance scams, dating apps, fake sugar daddies, sketchy tickets, weird texts — paste whatever feels off, any language, cualquier idioma. **Zero judgment in my box.** Nothing gets past me. 🧤";
+
+const GOALIE_ASKS = [
+  { label: "💸 'Sugar daddy' wants a gift card first", q: "Someone on Instagram offered to be my sugar daddy with a weekly allowance, but first I have to buy a $50 gift card to 'prove loyalty'. Is this a scam?" },
+  { label: "💘 Match is asking me for money", q: "I met someone on a dating app, we really hit it off, and now they urgently need money for a family emergency. What do I do?" },
+  { label: "🎫 Cheap tickets DM — legit?", q: "Someone is DMing me half-price World Cup tickets but I have to pay by bank transfer today. Legit?" },
+  { label: "📱 'FIFA' dice que cancelaron mi boleto", q: "Me llegó un SMS de 'FIFA' diciendo que mi boleto fue cancelado y debo verificar mi tarjeta en 24 horas." },
+];
+
+// Delivered to every fan who shares a story — they just trained the Goalie.
+const GOALIE_MANIFESTO = [
+  "Your story is now part of my defense.",
+  "What happened to you will NOT happen to the next fan — because you spoke up.",
+  "Every save I make from today carries your experience in it.",
+  "You are part of the community. Part of the wall. Part of the shield.",
+];
+
 function timeAgo(ts: number): string {
   const s = Math.max(0, Math.floor(Date.now() / 1000 - ts));
   if (s < 60) return `${s}s ago`;
@@ -363,6 +408,310 @@ function BrandLogo() {
   );
 }
 
+function GoalieZone({ active }: { active: boolean }) {
+  const [turns, setTurns] = useState<GoalieTurn[]>([{ role: "model", text: GOALIE_GREETING }]);
+  const [msg, setMsg] = useState("");
+  const [sending, setSending] = useState(false);
+  const [feed, setFeed] = useState<StoryFeed | null>(null);
+  const [showReport, setShowReport] = useState(false);
+  const [storyText, setStoryText] = useState("");
+  const [storyType, setStoryType] = useState("tickets");
+  const [consent, setConsent] = useState(false);
+  const [submitState, setSubmitState] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [contributorNum, setContributorNum] = useState<number | null>(null);
+  const [atBottom, setAtBottom] = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () =>
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+
+  const onChatScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 48);
+  };
+
+  const loadStories = () =>
+    fetch(`${API_BASE}/goalie/stories?limit=8`)
+      .then(r => r.json())
+      .then(setFeed)
+      .catch(() => {});
+  useEffect(() => { loadStories(); }, []);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [turns, sending]);
+
+  const send = async (raw?: string) => {
+    const text = (raw ?? msg).trim();
+    if (!text || sending) return;
+    const history = turns.map(t => ({ role: t.role, text: t.text }));
+    setTurns(t => [...t, { role: "user", text }]);
+    setMsg("");
+    setSending(true);
+    try {
+      const res = await fetch(`${API_BASE}/goalie/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text, history }),
+      });
+      const data = await res.json();
+      setTurns(t => [...t, { role: "model", text: data.response ?? "…", matches: data.community_matches }]);
+    } catch {
+      setTurns(t => [...t, { role: "model", text: "Connection to the box dropped — verify the backend is running on 127.0.0.1:8000." }]);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const submitStory = async () => {
+    if (!consent || storyText.trim().length < 20 || submitState === "sending") return;
+    setSubmitState("sending");
+    try {
+      const res = await fetch(`${API_BASE}/goalie/report`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ story: storyText.trim(), scam_type: storyType, language: "", consent }),
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setContributorNum(data.total ?? null);
+      setSubmitState("done");
+      setStoryText("");
+      setConsent(false);
+      loadStories();
+    } catch {
+      setSubmitState("error");
+    }
+  };
+
+  return (
+    <div className={`relative z-10 w-full max-w-[680px] flex-1 min-h-0 flex-col gap-2 ${active ? "flex" : "hidden"}`}>
+
+      {/* Goalie header */}
+      <div className="flex items-center gap-2 flex-shrink-0 px-1">
+        <span className="text-base">🥅</span>
+        <span className="text-[11px] font-black tracking-[0.2em]" style={{ color: "#fff" }}>ANTI-SCAMMER GOALIE</span>
+        <span className="text-[8px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+          style={{ background: `${T.babyBlue}15`, border: `1px solid ${T.babyBlue}50`, color: T.babyBlue }}>GATE A</span>
+        <span className="ml-auto text-[8px] tracking-[0.14em]" style={{ color: T.silverDim }}>
+          {feed ? `🛡️ ${feed.total} COMMUNITY REPORTS · ${feed.this_week} THIS WEEK` : "CONNECTING…"}
+        </span>
+      </div>
+
+      {/* Community mission — why the wall exists, who trains the Goalie */}
+      <div className="flex-shrink-0 px-3 py-1.5 rounded-md flex items-center gap-2"
+        style={{ background: `${GOLD}0A`, border: `1px solid ${GOLD}35` }}>
+        <span className="text-[10px] flex-shrink-0">🤝</span>
+        <span className="text-[8.5px] leading-relaxed" style={{ color: T.silver }}>
+          <span className="font-bold" style={{ color: GOLD }}>COMMUNITY MISSION · </span>
+          Every story shared by the <span className="font-bold" style={{ color: "#fff" }}>Raíces Cyber community</span> and
+          our <span className="font-bold" style={{ color: "#fff" }}>beta testers</span> trains
+          the Goalie — every scam counts: romance, dating apps, fake sugar daddies, tickets, texts.
+          World Cup or everyday life. <span style={{ color: GOLD }}>Tu historia protege a la próxima familia. 💙</span>
+        </span>
+      </div>
+
+      {/* Chat window — min height guarantees the chat never gets crushed by the wall */}
+      <Panel className="flex-1 flex flex-col min-h-[200px]">
+        <div className="h-full flex flex-col min-h-0">
+        <div className="relative flex-1 min-h-0">
+        <div ref={scrollRef} onScroll={onChatScroll} className="absolute inset-0 overflow-y-auto cs-scroll p-3.5 space-y-2.5">
+          {turns.map((t, i) =>
+            t.role === "user" ? (
+              <div key={i} className="flex justify-end">
+                <div className="max-w-[80%] px-3 py-2 rounded-lg rounded-br-sm text-[11px] leading-relaxed break-words"
+                  style={{ background: `${T.royalBlue}55`, border: `1px solid ${T.royalBlue}`, color: "#E3F2FD" }}>
+                  {t.text}
+                </div>
+              </div>
+            ) : (
+              <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
+                <div className="max-w-[85%] px-3 py-2 rounded-lg rounded-bl-sm"
+                  style={{ background: `${T.babyBlue}0D`, border: `1px solid ${T.babyBlue}35` }}>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="text-[10px]">🥅</span>
+                    <span className="text-[8px] font-bold tracking-[0.2em]" style={{ color: T.babyBlue }}>GOALIE</span>
+                    {(t.matches ?? 0) > 0 && (
+                      <span className="text-[7px] font-bold tracking-wider px-1.5 py-0.5 rounded-full"
+                        style={{ background: `${GOLD}18`, border: `1px solid ${GOLD}50`, color: GOLD }}>
+                        🛡️ COMMUNITY INTEL ×{t.matches}
+                      </span>
+                    )}
+                  </div>
+                  <RichText text={t.text} />
+                </div>
+              </motion.div>
+            )
+          )}
+          {sending && (
+            <div className="flex items-center gap-2 text-[10px]" style={{ color: T.silverDim }}>
+              <div className="w-3 h-3 border-2 border-t-transparent rounded-full animate-spin"
+                style={{ borderColor: T.babyBlue, borderTopColor: "transparent" }} />
+              The Goalie is reading the play…
+            </div>
+          )}
+        </div>
+
+        {/* Jump-to-latest — shows whenever the chat is scrolled up */}
+        <AnimatePresence>
+          {!atBottom && (
+            <motion.button initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }}
+              onClick={scrollToBottom}
+              className="absolute bottom-2 right-3 z-20 flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[9px] font-bold tracking-wider"
+              style={{ background: `${T.royalBlue}E6`, border: `1px solid ${T.babyBlue}70`, color: T.babyBlue, boxShadow: `0 0 12px ${T.babyBlue}40` }}>
+              ↓ LATEST
+            </motion.button>
+          )}
+        </AnimatePresence>
+        </div>
+
+        {/* quick asks + input */}
+        {/* (input stays pinned below the scroll region) */}
+        <div className="flex-shrink-0 p-2.5 pt-0 flex flex-col gap-2">
+          {turns.length <= 1 && (
+            <div className="grid grid-cols-2 gap-2">
+              {GOALIE_ASKS.map(c => (
+                <button key={c.label} onClick={() => send(c.q)} disabled={sending}
+                  className="text-[9px] font-semibold text-center px-2 py-1.5 rounded-lg transition-transform hover:scale-[1.02] disabled:opacity-50"
+                  style={{ background: `${T.babyBlue}10`, border: `1px solid ${T.babyBlue}35`, color: T.babyBlue }}>
+                  {c.label}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="flex gap-2 items-stretch">
+            <textarea value={msg} rows={2}
+              onChange={e => setMsg(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+              }}
+              placeholder="Paste the suspicious message here… / Pega aquí el mensaje sospechoso…"
+              className="flex-1 px-3 py-2 text-[11px] outline-none rounded-lg resize-none leading-relaxed"
+              style={{ background: "#08121f", border: `1px solid ${T.babyBlue}45`, color: T.silver }}
+            />
+            <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+              onClick={() => send()} disabled={sending}
+              className="px-4 text-[10px] font-bold tracking-[0.16em] rounded-lg disabled:opacity-60 flex-shrink-0"
+              style={{ background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#050d18" }}>
+              SEND
+            </motion.button>
+          </div>
+        </div>
+        </div>
+      </Panel>
+
+      {/* Community wall / report form */}
+      <Panel className="flex-shrink-0" decal="none">
+        {showReport ? (
+          <div className="p-3 flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] font-bold tracking-[0.2em]" style={{ color: GOLD }}>🛡️ ADD YOUR STORY TO THE COMMUNITY WALL</span>
+              <button onClick={() => { setShowReport(false); setSubmitState("idle"); }}
+                className="ml-auto text-[9px] px-2 py-0.5 rounded hover:bg-white/5" style={{ color: T.silverDim }}>✕ CLOSE</button>
+            </div>
+            {submitState === "done" ? (
+              <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
+                className="px-4 py-3 rounded-lg text-center"
+                style={{ background: `linear-gradient(135deg, ${GOLD}14, ${T.babyBlue}0E)`, border: `1px solid ${GOLD}55`, boxShadow: `0 0 24px ${GOLD}20` }}>
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.1 }}
+                  className="text-xl mb-1">🧤</motion.div>
+                <div className="text-[10px] font-black tracking-[0.24em] mb-2" style={{ color: GOLD }}>
+                  THE GOALIE&apos;S PROMISE
+                </div>
+                <div className="space-y-1 mb-2">
+                  {GOALIE_MANIFESTO.map((line, i) => (
+                    <motion.div key={i} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.25 + i * 0.35 }}
+                      className="text-[10px] leading-relaxed" style={{ color: "#E3F2FD" }}>
+                      {line}
+                    </motion.div>
+                  ))}
+                </div>
+                {contributorNum && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
+                    className="text-[9px] font-bold tracking-[0.18em] mb-1.5" style={{ color: T.babyBlue }}>
+                    ⭐ DEFENDER #{contributorNum} ON THE COMMUNITY WALL ⭐
+                  </motion.div>
+                )}
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.1 }}
+                  className="text-[9.5px] font-bold" style={{ color: GOLD }}>
+                  Gracias. De verdad — mil gracias. 💙 You make the shield stronger.
+                </motion.div>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }}
+                  className="text-[8px] tracking-wider mt-1.5" style={{ color: T.silverDim }}>
+                  — THE ANTI-SCAMMER GOALIE · WITH RAÍCES CYBER &amp; OUR BETA TESTERS
+                </motion.div>
+                <button onClick={() => { setShowReport(false); setSubmitState("idle"); }}
+                  className="mt-2 px-3 py-1 text-[9px] font-bold tracking-[0.14em] rounded-md transition-transform hover:scale-[1.03]"
+                  style={{ background: `${T.babyBlue}15`, border: `1px solid ${T.babyBlue}50`, color: T.babyBlue }}>
+                  BACK TO THE WALL
+                </button>
+              </motion.div>
+            ) : (
+              <>
+                <textarea value={storyText} rows={3}
+                  onChange={e => setStoryText(e.target.value)}
+                  placeholder="What happened? No names needed — emails and phone numbers are scrubbed automatically. / ¿Qué pasó? Sin nombres — correos y teléfonos se borran automáticamente."
+                  className="w-full px-3 py-2 text-[11px] outline-none rounded-lg resize-none leading-relaxed"
+                  style={{ background: "#08121f", border: `1px solid ${GOLD}45`, color: T.silver }} />
+                <div className="flex items-center gap-2 flex-wrap">
+                  <select value={storyType} onChange={e => setStoryType(e.target.value)}
+                    className="px-2 py-1.5 text-[10px] rounded-md outline-none"
+                    style={{ background: "#08121f", border: `1px solid ${T.royalBlue}80`, color: T.silver }}>
+                    {(feed?.scam_types ?? Object.keys(SCAM_TYPE_META)).map(t => (
+                      <option key={t} value={t}>{SCAM_TYPE_META[t]?.icon ?? "⚠️"} {SCAM_TYPE_META[t]?.label ?? t}</option>
+                    ))}
+                  </select>
+                  <label className="flex items-center gap-1.5 text-[9px] cursor-pointer" style={{ color: T.silver }}>
+                    <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} />
+                    Share anonymously with the community
+                  </label>
+                  <button onClick={submitStory}
+                    disabled={!consent || storyText.trim().length < 20 || submitState === "sending"}
+                    className="ml-auto px-3 py-1.5 text-[9px] font-bold tracking-[0.14em] rounded-md disabled:opacity-40"
+                    style={{ background: `${GOLD}20`, border: `1px solid ${GOLD}60`, color: GOLD }}>
+                    {submitState === "sending" ? "SAVING…" : "SUBMIT STORY"}
+                  </button>
+                </div>
+                {submitState === "error" && (
+                  <div className="text-[9px]" style={{ color: "#FF8C42" }}>Could not save — story needs 20+ characters and the backend online.</div>
+                )}
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[9px] font-bold tracking-[0.2em]" style={{ color: GOLD }}>🛡️ COMMUNITY SCAM WALL</span>
+              <span className="text-[8px] tracking-wider" style={{ color: T.silverDim }}>
+                REAL REPORTS · TRAINING THE GOALIE
+              </span>
+              <button onClick={() => setShowReport(true)}
+                className="ml-auto px-2.5 py-1 text-[9px] font-bold tracking-[0.12em] rounded-md transition-transform hover:scale-[1.03]"
+                style={{ background: `${GOLD}18`, border: `1px solid ${GOLD}55`, color: GOLD }}>
+                ➕ ADD MY STORY
+              </button>
+            </div>
+            <div className="max-h-[96px] overflow-y-auto cs-scroll space-y-1.5 pr-1">
+              {feed?.stories?.length ? feed.stories.map(s => (
+                <div key={s.id} className="flex items-start gap-2 px-2 py-1.5 rounded-md"
+                  style={{ background: `${T.royalBlue}14`, border: `1px solid ${T.royalBlue}35` }}>
+                  <span className="text-[10px] flex-shrink-0">{SCAM_TYPE_META[s.scam_type]?.icon ?? "⚠️"}</span>
+                  <span className="text-[10px] leading-snug break-words flex-1" style={{ color: T.silver }}>{s.story}</span>
+                  <span className="text-[7px] flex-shrink-0 mt-0.5" style={{ color: T.silverDim }}>{timeAgo(s.created)}</span>
+                </div>
+              )) : (
+                <div className="text-[10px]" style={{ color: T.silverDim }}>Loading community reports…</div>
+              )}
+            </div>
+          </div>
+        )}
+      </Panel>
+    </div>
+  );
+}
+
 export default function CyberShieldCommandCenter() {
   const [input, setInput]     = useState("");
   const [query, setQuery]     = useState("");
@@ -377,6 +726,7 @@ export default function CyberShieldCommandCenter() {
   const [matchFeed, setMatchFeed] = useState<MatchFeed | null>(null);
   const [threatFeed, setThreatFeed] = useState<ThreatFeed | null>(null);
   const [rightTab, setRightTab] = useState<"standings" | "fixtures" | "news">("news");
+  const [centerTab, setCenterTab] = useState<"guardian" | "goalie">("guardian");
 
   useEffect(() => {
     const load = () =>
@@ -486,6 +836,29 @@ export default function CyberShieldCommandCenter() {
           <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.neonGreen, boxShadow: `0 0 6px ${T.neonGreen}` }} />
           <span className="font-bold tracking-widest" style={{ color: T.neonGreen }}>ALL SYSTEMS ACTIVE</span>
         </div>
+      </div>
+
+      {/* ── GRATITUDE BANNERS — Raíces Cyber + beta testers ── */}
+      <div className="flex items-center justify-center gap-2 flex-shrink-0 flex-wrap px-2">
+        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-2 px-3 py-1 rounded-full"
+          style={{ background: `${GOLD}10`, border: `1px solid ${GOLD}50`, boxShadow: `0 0 14px ${GOLD}18` }}>
+          <span className="flex items-center bg-white rounded-full px-2 py-[3px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/raices_logo.png" alt="Raíces Cyber Organization" style={{ height: 15 }} />
+          </span>
+          <span className="text-[9px] font-bold tracking-[0.16em]" style={{ color: GOLD }}>
+            THANK YOU <span style={{ color: "#fff" }}>RAÍCES CYBER ORGANIZATION</span> · COMMUNITY PARTNER 💙
+          </span>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+          style={{ background: `${T.babyBlue}0E`, border: `1px solid ${T.babyBlue}45` }}>
+          <span className="text-[10px]">🙌</span>
+          <span className="text-[9px] font-bold tracking-[0.16em]" style={{ color: T.babyBlue }}>
+            GRACIAS A NUESTROS <span style={{ color: "#fff" }}>BETA TESTERS</span> — YOU MAKE THE SHIELD STRONGER
+          </span>
+        </motion.div>
       </div>
 
       {/* ── MAIN GRID ── */}
@@ -619,7 +992,7 @@ export default function CyberShieldCommandCenter() {
 
         {/* CENTER — flex-1 */}
         <Panel className="flex-1 flex flex-col min-w-0">
-          <div className="relative flex flex-col items-center h-full px-8 py-3 overflow-y-auto cs-scroll">
+          <div className="relative flex flex-col items-center h-full px-8 py-3 overflow-hidden">
 
             {/* Stadium pitch motif — center circle + halfway line */}
             <div className="absolute inset-0 pointer-events-none" aria-hidden>
@@ -630,8 +1003,29 @@ export default function CyberShieldCommandCenter() {
               <div className="absolute left-0 right-0 top-1/2" style={{ borderTop: `1.5px solid ${T.babyBlue}0A` }} />
             </div>
 
+            {/* Center tab switch — El Guardián console vs Goalie chat */}
+            <div className="relative z-10 w-full max-w-[680px] flex-shrink-0 grid grid-cols-2 gap-1 p-1 rounded-lg mb-2"
+              style={{ background: T.panel, border: `1px solid ${T.royalBlue}55` }}>
+              {([["guardian", "🦅 EL GUARDIÁN"], ["goalie", "🥅 GOALIE CHAT"]] as const).map(([key, label]) => {
+                const active = centerTab === key;
+                return (
+                  <button key={key} onClick={() => setCenterTab(key)}
+                    className="py-1.5 rounded-md text-[10px] font-bold tracking-[0.16em] transition-all"
+                    style={active
+                      ? { background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#04101f", boxShadow: `0 0 14px ${T.babyBlue}45` }
+                      : { color: T.silverDim }}>
+                    {label}
+                    {key === "goalie" && !active && (
+                      <span className="ml-1.5 text-[7px] font-bold px-1 py-0.5 rounded-full"
+                        style={{ background: `${GOLD}20`, color: GOLD }}>BETA</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
             {/* El Guardián interactive console — compact, live, modern */}
-            <div className="relative z-10 w-full max-w-[680px] flex flex-col">
+            <div className={`relative z-10 w-full max-w-[680px] flex-1 min-h-0 overflow-y-auto cs-scroll flex-col ${centerTab === "guardian" ? "flex" : "hidden"}`}>
 
               {/* Hero — Eagle Eye + identity + live posture */}
               <div className="flex flex-col items-center mb-3">
@@ -771,6 +1165,8 @@ export default function CyberShieldCommandCenter() {
               </div>
 
             </div>
+
+            <GoalieZone active={centerTab === "goalie"} />
           </div>
         </Panel>
 
@@ -991,6 +1387,7 @@ export default function CyberShieldCommandCenter() {
                 "MEXICO CITY", "MIAMI", "MONTERREY", "NEW YORK / NEW JERSEY", "PHILADELPHIA",
                 "SAN FRANCISCO", "SEATTLE", "TORONTO", "VANCOUVER",
                 "PROTECTED BY CYBERSHIELD AI — EL GUARDIÁN", "PC DIGITAL SOLUTIONS",
+                "THANK YOU RAÍCES CYBER ORGANIZATION 💙", "GRACIAS A NUESTROS BETA TESTERS 🙌",
               ].map((item, i) => (
                 <span key={i} className="flex items-center">
                   <span className="px-3">{item}</span>
