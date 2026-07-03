@@ -418,6 +418,7 @@ function GoalieZone({ active }: { active: boolean }) {
   const [storyType, setStoryType] = useState("tickets");
   const [consent, setConsent] = useState(false);
   const [submitState, setSubmitState] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [submitError, setSubmitError] = useState("");
   const [contributorNum, setContributorNum] = useState<number | null>(null);
   const [atBottom, setAtBottom] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -473,14 +474,19 @@ function GoalieZone({ active }: { active: boolean }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ story: storyText.trim(), scam_type: storyType, language: "", consent }),
       });
-      if (!res.ok) throw new Error();
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSubmitError(typeof data.detail === "string" ? data.detail : "Could not save — is the backend online?");
+        setSubmitState("error");
+        return;
+      }
       setContributorNum(data.total ?? null);
       setSubmitState("done");
       setStoryText("");
       setConsent(false);
       loadStories();
     } catch {
+      setSubmitError("Could not save — is the backend online?");
       setSubmitState("error");
     }
   };
@@ -587,7 +593,7 @@ function GoalieZone({ active }: { active: boolean }) {
                 if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
               }}
               placeholder="Paste the suspicious message here… / Pega aquí el mensaje sospechoso…"
-              className="flex-1 px-3 py-2 text-[11px] outline-none rounded-lg resize-none leading-relaxed"
+              className="flex-1 px-3 py-2 text-[11px] outline-none rounded-lg resize-none leading-relaxed cs-scroll"
               style={{ background: "#08121f", border: `1px solid ${T.babyBlue}45`, color: T.silver }}
             />
             <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
@@ -653,7 +659,7 @@ function GoalieZone({ active }: { active: boolean }) {
                 <textarea value={storyText} rows={3}
                   onChange={e => setStoryText(e.target.value)}
                   placeholder="What happened? No names needed — emails and phone numbers are scrubbed automatically. / ¿Qué pasó? Sin nombres — correos y teléfonos se borran automáticamente."
-                  className="w-full px-3 py-2 text-[11px] outline-none rounded-lg resize-none leading-relaxed"
+                  className="w-full px-3 py-2 text-[11px] outline-none rounded-lg resize-none leading-relaxed cs-scroll"
                   style={{ background: "#08121f", border: `1px solid ${GOLD}45`, color: T.silver }} />
                 <div className="flex items-center gap-2 flex-wrap">
                   <select value={storyType} onChange={e => setStoryType(e.target.value)}
@@ -675,7 +681,7 @@ function GoalieZone({ active }: { active: boolean }) {
                   </button>
                 </div>
                 {submitState === "error" && (
-                  <div className="text-[9px]" style={{ color: "#FF8C42" }}>Could not save — story needs 20+ characters and the backend online.</div>
+                  <div className="text-[9px]" style={{ color: "#FF8C42" }}>🧤 {submitError}</div>
                 )}
               </>
             )}
@@ -1138,7 +1144,7 @@ export default function CyberShieldCommandCenter() {
                       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleActivate(); }
                     }}
                     placeholder="Drop a suspicious link, message, or anything that feels off…"
-                    className="w-full px-4 py-2.5 text-xs outline-none rounded-lg resize-none leading-relaxed transition-all"
+                    className="w-full px-4 py-2.5 text-xs outline-none rounded-lg resize-none leading-relaxed transition-all cs-scroll"
                     style={{
                       background: "#08121f",
                       border: `1px solid ${T.babyBlue}55`,
