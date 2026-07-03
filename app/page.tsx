@@ -1012,17 +1012,19 @@ export default function CyberShieldCommandCenter() {
             {/* Center tab switch — El Guardián console vs Goalie chat */}
             <div className="relative z-10 w-full max-w-[680px] flex-shrink-0 grid grid-cols-2 gap-1 p-1 rounded-lg mb-2"
               style={{ background: T.panel, border: `1px solid ${T.royalBlue}55` }}>
-              {([["guardian", "🦅 EL GUARDIÁN"], ["goalie", "🥅 GOALIE CHAT"]] as const).map(([key, label]) => {
+              {([["guardian", "EL GUARDIÁN"], ["goalie", "GOALIE CHAT"]] as const).map(([key, label]) => {
                 const active = centerTab === key;
+                const markColor = active ? "#04101f" : T.silverDim;
                 return (
                   <button key={key} onClick={() => setCenterTab(key)}
-                    className="py-1.5 rounded-md text-[10px] font-bold tracking-[0.16em] transition-all"
+                    className="py-1.5 rounded-md text-[10px] font-bold tracking-[0.16em] transition-all flex items-center justify-center gap-1.5"
                     style={active
                       ? { background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#04101f", boxShadow: `0 0 14px ${T.babyBlue}45` }
                       : { color: T.silverDim }}>
+                    <EagleMark size={13} color={markColor} glow={active ? "#04101f" : T.babyBlue} />
                     {label}
                     {key === "goalie" && !active && (
-                      <span className="ml-1.5 text-[7px] font-bold px-1 py-0.5 rounded-full"
+                      <span className="ml-0.5 text-[7px] font-bold px-1 py-0.5 rounded-full"
                         style={{ background: `${GOLD}20`, color: GOLD }}>BETA</span>
                     )}
                   </button>
