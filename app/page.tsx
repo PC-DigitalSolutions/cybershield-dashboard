@@ -126,7 +126,7 @@ const SCAM_TYPE_META: Record<string, { icon: string; label: string }> = {
 };
 
 const GOALIE_GREETING =
-  "In the box and ready. Romance scams, dating apps, fake sugar daddies, sketchy tickets, weird texts — paste whatever feels off, any language, cualquier idioma. **Zero judgment in my box.** Nothing gets past me. 🧤";
+  "Welcome — I'm here to help. Paste any message, offer, or profile that feels off and I'll give you a clear read and your next steps. I handle romance and dating-app fraud, financial scams, ticket fraud, extortion, and more — in English o en español. **Every conversation is private and judgment-free.**";
 
 const GOALIE_ASKS = [
   { label: "💸 'Sugar daddy' wants a gift card first", q: "Someone on Instagram offered to be my sugar daddy with a weekly allowance, but first I have to buy a $50 gift card to 'prove loyalty'. Is this a scam?" },
