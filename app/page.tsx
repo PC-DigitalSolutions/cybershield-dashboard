@@ -23,6 +23,9 @@ const T = {
 
 const GOLD = "#F2C14E";
 
+// Beta tester feedback form (Google Forms — paste the LIVE/published URL).
+const FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdsiVx3IB8T_g4vcpxHh-tdnTpXdZkM49xvDV7K_Z0jMnn9mg/viewform";
+
 type AgentReport = { gate: string; agent: string; response: string };
 
 type ApiTeam = { name: string; code: string; crest: string };
@@ -420,8 +423,20 @@ function GoalieZone({ active }: { active: boolean }) {
   const [submitState, setSubmitState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [submitError, setSubmitError] = useState("");
   const [contributorNum, setContributorNum] = useState<number | null>(null);
+  const [prefilledFromChat, setPrefilledFromChat] = useState(false);
   const [atBottom, setAtBottom] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Open the "add my story" form, pulling in what the tester already told the
+  // Goalie so they never have to retype their story to share it to the wall.
+  const openReport = () => {
+    const lastUser = [...turns].reverse().find(t => t.role === "user")?.text?.trim();
+    if (lastUser && !storyText.trim()) {
+      setStoryText(lastUser);
+      setPrefilledFromChat(true);
+    }
+    setShowReport(true);
+  };
 
   const scrollToBottom = () =>
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -484,6 +499,7 @@ function GoalieZone({ active }: { active: boolean }) {
       setSubmitState("done");
       setStoryText("");
       setConsent(false);
+      setPrefilledFromChat(false);
       loadStories();
     } catch {
       setSubmitError("Could not save — is the backend online?");
@@ -505,16 +521,14 @@ function GoalieZone({ active }: { active: boolean }) {
         </span>
       </div>
 
-      {/* Community mission — why the wall exists, who trains the Goalie */}
-      <div className="flex-shrink-0 px-3 py-1.5 rounded-md flex items-center gap-2"
-        style={{ background: `${GOLD}0A`, border: `1px solid ${GOLD}35` }}>
-        <span className="text-[10px] flex-shrink-0">🤝</span>
-        <span className="text-[8.5px] leading-relaxed" style={{ color: T.silver }}>
-          <span className="font-bold" style={{ color: GOLD }}>COMMUNITY MISSION · </span>
-          Every story shared by the <span className="font-bold" style={{ color: "#fff" }}>Raíces Cyber community</span> and
-          our <span className="font-bold" style={{ color: "#fff" }}>beta testers</span> trains
-          the Goalie — every scam counts: romance, dating apps, fake sugar daddies, tickets, texts.
-          World Cup or everyday life. <span style={{ color: GOLD }}>Tu historia protege a la próxima familia. 💙</span>
+      {/* Community mission — one clean, readable line */}
+      <div className="flex-shrink-0 px-3.5 py-2 rounded-lg flex items-center gap-2.5"
+        style={{ background: `${GOLD}0A`, border: `1px solid ${GOLD}30` }}>
+        <span className="text-[12px] flex-shrink-0">🤝</span>
+        <span className="text-[10px] leading-relaxed" style={{ color: T.silver }}>
+          <span className="font-bold" style={{ color: GOLD }}>Community mission — </span>
+          every story you share trains the Goalie and protects the next person.
+          <span style={{ color: GOLD }}> Tu historia protege a la próxima familia. 💙</span>
         </span>
       </div>
 
@@ -522,20 +536,20 @@ function GoalieZone({ active }: { active: boolean }) {
       <Panel className="flex-1 flex flex-col min-h-[200px]">
         <div className="h-full flex flex-col min-h-0">
         <div className="relative flex-1 min-h-0">
-        <div ref={scrollRef} onScroll={onChatScroll} className="absolute inset-0 overflow-y-auto cs-scroll p-3.5 space-y-2.5">
+        <div ref={scrollRef} onScroll={onChatScroll} className="absolute inset-0 overflow-y-auto cs-scroll p-4 space-y-3.5">
           {turns.map((t, i) =>
             t.role === "user" ? (
               <div key={i} className="flex justify-end">
-                <div className="max-w-[80%] px-3 py-2 rounded-lg rounded-br-sm text-[11px] leading-relaxed break-words"
+                <div className="max-w-[82%] px-3.5 py-2.5 rounded-2xl rounded-br-md text-[13px] leading-relaxed break-words"
                   style={{ background: `${T.royalBlue}55`, border: `1px solid ${T.royalBlue}`, color: "#E3F2FD" }}>
                   {t.text}
                 </div>
               </div>
             ) : (
               <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
-                <div className="max-w-[85%] px-3 py-2 rounded-lg rounded-bl-sm"
+                <div className="max-w-[88%] px-3.5 py-2.5 rounded-2xl rounded-bl-md"
                   style={{ background: `${T.babyBlue}0D`, border: `1px solid ${T.babyBlue}35` }}>
-                  <div className="flex items-center gap-1.5 mb-1">
+                  <div className="flex items-center gap-1.5 mb-1.5">
                     <span className="text-[10px]">🥅</span>
                     <span className="text-[8px] font-bold tracking-[0.2em]" style={{ color: T.babyBlue }}>GOALIE</span>
                     {(t.matches ?? 0) > 0 && (
@@ -556,6 +570,17 @@ function GoalieZone({ active }: { active: boolean }) {
                 style={{ borderColor: T.babyBlue, borderTopColor: "transparent" }} />
               The Goalie is reading the play…
             </div>
+          )}
+          {/* Share-to-wall CTA — appears once the tester has told their story, so
+              they can add it to the wall without retyping a single word */}
+          {!sending && !showReport && turns.some(t => t.role === "user") && (
+            <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="flex justify-center pt-1">
+              <button onClick={openReport}
+                className="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.1em] px-3.5 py-2 rounded-full transition-transform hover:scale-[1.03]"
+                style={{ background: `${GOLD}12`, border: `1px solid ${GOLD}45`, color: GOLD }}>
+                🛡️ Share this with the community wall →
+              </button>
+            </motion.div>
           )}
         </div>
 
@@ -579,7 +604,7 @@ function GoalieZone({ active }: { active: boolean }) {
             <div className="grid grid-cols-2 gap-2">
               {GOALIE_ASKS.map(c => (
                 <button key={c.label} onClick={() => send(c.q)} disabled={sending}
-                  className="text-[9px] font-semibold text-center px-2 py-1.5 rounded-lg transition-transform hover:scale-[1.02] disabled:opacity-50"
+                  className="text-[10px] font-semibold text-center px-2.5 py-2 rounded-lg leading-snug transition-transform hover:scale-[1.02] disabled:opacity-50"
                   style={{ background: `${T.babyBlue}10`, border: `1px solid ${T.babyBlue}35`, color: T.babyBlue }}>
                   {c.label}
                 </button>
@@ -593,7 +618,7 @@ function GoalieZone({ active }: { active: boolean }) {
                 if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
               }}
               placeholder="Paste the suspicious message here… / Pega aquí el mensaje sospechoso…"
-              className="flex-1 px-3 py-2 text-[11px] outline-none rounded-lg resize-none leading-relaxed cs-scroll"
+              className="flex-1 px-3.5 py-2.5 text-[12px] outline-none rounded-lg resize-none leading-relaxed cs-scroll"
               style={{ background: "#08121f", border: `1px solid ${T.babyBlue}45`, color: T.silver }}
             />
             <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
@@ -612,8 +637,8 @@ function GoalieZone({ active }: { active: boolean }) {
         {showReport ? (
           <div className="p-3 flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-[9px] font-bold tracking-[0.2em]" style={{ color: GOLD }}>🛡️ ADD YOUR STORY TO THE COMMUNITY WALL</span>
-              <button onClick={() => { setShowReport(false); setSubmitState("idle"); }}
+              <span className="text-[10px] font-bold tracking-[0.16em]" style={{ color: GOLD }}>🛡️ ADD YOUR STORY TO THE COMMUNITY WALL</span>
+              <button onClick={() => { setShowReport(false); setSubmitState("idle"); setPrefilledFromChat(false); }}
                 className="ml-auto text-[9px] px-2 py-0.5 rounded hover:bg-white/5" style={{ color: T.silverDim }}>✕ CLOSE</button>
             </div>
             {submitState === "done" ? (
@@ -656,10 +681,16 @@ function GoalieZone({ active }: { active: boolean }) {
               </motion.div>
             ) : (
               <>
-                <textarea value={storyText} rows={3}
+                {prefilledFromChat && (
+                  <div className="flex items-center gap-1.5 text-[9.5px] leading-relaxed" style={{ color: T.babyBlue }}>
+                    <span>💬</span>
+                    <span>Pulled from your chat — edit it however you like before sharing.</span>
+                  </div>
+                )}
+                <textarea value={storyText} rows={4}
                   onChange={e => setStoryText(e.target.value)}
                   placeholder="What happened? No names needed — emails and phone numbers are scrubbed automatically. / ¿Qué pasó? Sin nombres — correos y teléfonos se borran automáticamente."
-                  className="w-full px-3 py-2 text-[11px] outline-none rounded-lg resize-none leading-relaxed cs-scroll"
+                  className="w-full px-3.5 py-2.5 text-[12px] outline-none rounded-lg resize-none leading-relaxed cs-scroll"
                   style={{ background: "#08121f", border: `1px solid ${GOLD}45`, color: T.silver }} />
                 <div className="flex items-center gap-2 flex-wrap">
                   <select value={storyType} onChange={e => setStoryType(e.target.value)}
@@ -687,28 +718,28 @@ function GoalieZone({ active }: { active: boolean }) {
             )}
           </div>
         ) : (
-          <div className="p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[9px] font-bold tracking-[0.2em]" style={{ color: GOLD }}>🛡️ COMMUNITY SCAM WALL</span>
-              <span className="text-[8px] tracking-wider" style={{ color: T.silverDim }}>
-                REAL REPORTS · TRAINING THE GOALIE
+          <div className="p-3.5">
+            <div className="flex items-center gap-2 mb-2.5">
+              <span className="text-[10px] font-bold tracking-[0.18em]" style={{ color: GOLD }}>🛡️ COMMUNITY SCAM WALL</span>
+              <span className="text-[9px] tracking-wide" style={{ color: T.silverDim }}>
+                {feed ? `${feed.total} reports` : ""}
               </span>
-              <button onClick={() => setShowReport(true)}
-                className="ml-auto px-2.5 py-1 text-[9px] font-bold tracking-[0.12em] rounded-md transition-transform hover:scale-[1.03]"
+              <button onClick={openReport}
+                className="ml-auto px-3 py-1.5 text-[9px] font-bold tracking-[0.12em] rounded-md transition-transform hover:scale-[1.03]"
                 style={{ background: `${GOLD}18`, border: `1px solid ${GOLD}55`, color: GOLD }}>
                 ➕ ADD MY STORY
               </button>
             </div>
-            <div className="max-h-[96px] overflow-y-auto cs-scroll space-y-1.5 pr-1">
+            <div className="max-h-[132px] overflow-y-auto cs-scroll space-y-2 pr-1">
               {feed?.stories?.length ? feed.stories.map(s => (
-                <div key={s.id} className="flex items-start gap-2 px-2 py-1.5 rounded-md"
+                <div key={s.id} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg"
                   style={{ background: `${T.royalBlue}14`, border: `1px solid ${T.royalBlue}35` }}>
-                  <span className="text-[10px] flex-shrink-0">{SCAM_TYPE_META[s.scam_type]?.icon ?? "⚠️"}</span>
-                  <span className="text-[10px] leading-snug break-words flex-1" style={{ color: T.silver }}>{s.story}</span>
-                  <span className="text-[7px] flex-shrink-0 mt-0.5" style={{ color: T.silverDim }}>{timeAgo(s.created)}</span>
+                  <span className="text-[14px] flex-shrink-0 mt-px">{SCAM_TYPE_META[s.scam_type]?.icon ?? "⚠️"}</span>
+                  <span className="text-[11.5px] leading-relaxed break-words flex-1" style={{ color: T.silver }}>{s.story}</span>
+                  <span className="text-[8px] flex-shrink-0 mt-1 tracking-wide" style={{ color: T.silverDim }}>{timeAgo(s.created)}</span>
                 </div>
               )) : (
-                <div className="text-[10px]" style={{ color: T.silverDim }}>Loading community reports…</div>
+                <div className="text-[11px]" style={{ color: T.silverDim }}>Loading community reports…</div>
               )}
             </div>
           </div>
@@ -1383,28 +1414,43 @@ export default function CyberShieldCommandCenter() {
         </div>
       </div>
 
-      {/* footer — World Cup ticker */}
-      <div className="relative overflow-hidden flex-shrink-0 py-1"
+      {/* footer — World Cup ticker + beta feedback button */}
+      <div className="flex items-center gap-3 flex-shrink-0 py-1 pr-1"
         style={{ borderTop: `1px solid ${T.royalBlue}40` }}>
-        <div className="cs-ticker flex w-max whitespace-nowrap text-[9px] tracking-[0.25em]" style={{ color: T.silverDim }}>
-          {[0, 1].map(k => (
-            <span key={k} className="flex items-center">
-              {[
-                "FIFA WORLD CUP 2026", "JUNE 11 — JULY 19", "48 TEAMS", "104 MATCHES", "16 HOST CITIES",
-                "ATLANTA", "BOSTON", "DALLAS", "GUADALAJARA", "HOUSTON", "KANSAS CITY", "LOS ANGELES",
-                "MEXICO CITY", "MIAMI", "MONTERREY", "NEW YORK / NEW JERSEY", "PHILADELPHIA",
-                "SAN FRANCISCO", "SEATTLE", "TORONTO", "VANCOUVER",
-                "PROTECTED BY CYBERSHIELD AI — EL GUARDIÁN", "PC DIGITAL SOLUTIONS",
-                "THANK YOU RAÍCES CYBER ORGANIZATION 💙", "GRACIAS A NUESTROS BETA TESTERS 🙌",
-              ].map((item, i) => (
-                <span key={i} className="flex items-center">
-                  <span className="px-3">{item}</span>
-                  <span style={{ color: T.babyBlue }}>⚽</span>
-                </span>
-              ))}
-            </span>
-          ))}
+        <div className="relative overflow-hidden flex-1 min-w-0">
+          <div className="cs-ticker flex w-max whitespace-nowrap text-[9px] tracking-[0.25em]" style={{ color: T.silverDim }}>
+            {[0, 1].map(k => (
+              <span key={k} className="flex items-center">
+                {[
+                  "FIFA WORLD CUP 2026", "JUNE 11 — JULY 19", "48 TEAMS", "104 MATCHES", "16 HOST CITIES",
+                  "ATLANTA", "BOSTON", "DALLAS", "GUADALAJARA", "HOUSTON", "KANSAS CITY", "LOS ANGELES",
+                  "MEXICO CITY", "MIAMI", "MONTERREY", "NEW YORK / NEW JERSEY", "PHILADELPHIA",
+                  "SAN FRANCISCO", "SEATTLE", "TORONTO", "VANCOUVER",
+                  "PROTECTED BY CYBERSHIELD AI — EL GUARDIÁN", "PC DIGITAL SOLUTIONS",
+                  "THANK YOU RAÍCES CYBER ORGANIZATION 💙", "GRACIAS A NUESTROS BETA TESTERS 🙌",
+                ].map((item, i) => (
+                  <span key={i} className="flex items-center">
+                    <span className="px-3">{item}</span>
+                    <span style={{ color: T.babyBlue }}>⚽</span>
+                  </span>
+                ))}
+              </span>
+            ))}
+          </div>
         </div>
+
+        {/* Beta tester feedback — standalone call to action */}
+        <motion.a href={FEEDBACK_FORM_URL} target="_blank" rel="noopener noreferrer"
+          whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+          className="flex items-center gap-2 flex-shrink-0 px-3.5 py-1.5 rounded-full text-[9px] font-black tracking-[0.18em]"
+          style={{
+            background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`,
+            color: "#04101f",
+            boxShadow: `0 0 16px ${T.babyBlue}50`,
+          }}>
+          <EagleMark size={14} color="#04101f" glow="#04101f" />
+          GIVE FEEDBACK ↗
+        </motion.a>
       </div>
     </div>
   );
