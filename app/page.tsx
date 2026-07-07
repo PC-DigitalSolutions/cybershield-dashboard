@@ -863,39 +863,31 @@ export default function CyberShieldCommandCenter() {
         </div>
         <div className="flex items-center gap-2 px-3 py-1 rounded-full"
           style={{ background: `${T.royalBlue}25`, border: `1px solid ${T.royalBlue}80` }}>
-          <motion.span className="text-xs inline-block"
-            animate={{ rotate: 360 }} transition={{ duration: 6, repeat: Infinity, ease: "linear" }}>⚽</motion.span>
+          <span className="text-xs inline-block">⚽</span>
           <span className="text-[10px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>FIFA WORLD CUP 2026</span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold tracking-widest animate-pulse"
+          <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold tracking-widest"
             style={{ background: `${T.neonGreen}20`, border: `1px solid ${T.neonGreen}60`, color: T.neonGreen }}>LIVE</span>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.neonGreen, boxShadow: `0 0 6px ${T.neonGreen}` }} />
+          <div className="w-2 h-2 rounded-full" style={{ background: T.neonGreen, boxShadow: `0 0 6px ${T.neonGreen}` }} />
           <span className="font-bold tracking-widest" style={{ color: T.neonGreen }}>ALL SYSTEMS ACTIVE</span>
         </div>
       </div>
 
-      {/* ── GRATITUDE BANNERS — Raíces Cyber + beta testers ── */}
-      <div className="flex items-center justify-center gap-2 flex-shrink-0 flex-wrap px-2">
-        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 px-3 py-1 rounded-full"
-          style={{ background: `${GOLD}10`, border: `1px solid ${GOLD}50`, boxShadow: `0 0 14px ${GOLD}18` }}>
-          <span className="flex items-center bg-white rounded-full px-2 py-[3px]">
+      {/* ── GRATITUDE BANNER — Raíces Cyber + beta testers, one calm line ── */}
+      <div className="flex items-center justify-center flex-shrink-0 px-2">
+        <div className="flex items-center gap-2.5 px-3.5 py-1 rounded-full"
+          style={{ background: `${GOLD}0C`, border: `1px solid ${GOLD}40` }}>
+          <span className="flex items-center bg-white rounded-full px-1.5 py-[2px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/raices_logo.png" alt="Raíces Cyber Organization" style={{ height: 15 }} />
+            <img src="/raices_logo.png" alt="Raíces Cyber Organization" style={{ height: 13 }} />
           </span>
-          <span className="text-[9px] font-bold tracking-[0.16em]" style={{ color: GOLD }}>
-            THANK YOU <span style={{ color: "#fff" }}>RAÍCES CYBER ORGANIZATION</span> · COMMUNITY PARTNER 💙
+          <span className="text-[9px] font-bold tracking-[0.14em]" style={{ color: T.silver }}>
+            <span style={{ color: GOLD }}>THANK YOU</span> RAÍCES CYBER
+            <span style={{ color: `${T.silverDim}` }}> &amp; </span>
+            OUR BETA TESTERS <span style={{ color: GOLD }}>💙</span>
           </span>
-        </motion.div>
-        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-full"
-          style={{ background: `${T.babyBlue}0E`, border: `1px solid ${T.babyBlue}45` }}>
-          <span className="text-[10px]">🙌</span>
-          <span className="text-[9px] font-bold tracking-[0.16em]" style={{ color: T.babyBlue }}>
-            GRACIAS A NUESTROS <span style={{ color: "#fff" }}>BETA TESTERS</span> — YOU MAKE THE SHIELD STRONGER
-          </span>
-        </motion.div>
+        </div>
       </div>
 
       {/* ── MAIN GRID ── */}
@@ -1008,9 +1000,8 @@ export default function CyberShieldCommandCenter() {
               </div>
               <div className="flex items-center gap-2 mb-3 px-2 py-1.5 rounded-sm flex-shrink-0"
                 style={{ background: `${T.neonGreen}12`, border: `1px solid ${T.neonGreen}33` }}>
-                <motion.span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                  style={{ background: T.neonGreen, boxShadow: `0 0 6px ${T.neonGreen}` }}
-                  animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.6, repeat: Infinity }} />
+                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ background: T.neonGreen, boxShadow: `0 0 6px ${T.neonGreen}` }} />
                 <span className="text-[10px] font-bold tracking-wider" style={{ color: T.neonGreen }}>EL GUARDIÁN · ON DUTY</span>
               </div>
               <div className="space-y-2.5 flex-1">
@@ -1078,36 +1069,42 @@ export default function CyberShieldCommandCenter() {
                   <p className="text-[9px] tracking-[0.24em] font-bold" style={{ color: T.babyBlue }}>EL GUARDIÁN · WORLD CUP 2026 DEFENSE</p>
                   <span className="flex items-center gap-1.5 text-[8px] font-bold tracking-widest px-2 py-0.5 rounded-full"
                     style={{ background: `${posture.color}15`, border: `1px solid ${posture.color}55`, color: posture.color }}>
-                    <motion.span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: posture.color }}
-                      animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.6, repeat: Infinity }} />
+                    <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: posture.color }} />
                     {posture.label}
                   </span>
                 </div>
               </div>
 
-              {/* Live stats */}
-              <div className="grid grid-cols-3 gap-2 mb-4">
-                {[
-                  { label: "ACTIVE THREATS", value: threatFeed?.active_threats ?? "—", color: "#FF8C42" },
-                  { label: "GATES ONLINE",   value: "4 / 4",                          color: T.neonGreen },
-                  { label: "SIGNALS SCANNED", value: threatFeed?.total_seen ?? "—",   color: T.babyBlue },
-                ].map(s => (
-                  <div key={s.label} className="rounded-lg px-3 py-2.5 text-center"
-                    style={{ background: `${T.royalBlue}1A`, border: `1px solid ${T.royalBlue}45` }}>
-                    <div className="text-xl font-black font-mono leading-none" style={{ color: s.color }}>{s.value}</div>
-                    <div className="text-[8px] tracking-[0.12em] mt-1.5" style={{ color: T.silverDim }}>{s.label}</div>
-                  </div>
-                ))}
-              </div>
+              {/* Primary action — the one clear thing to do on arrival */}
+              <p className="text-center text-[12px] leading-relaxed mb-3 px-4" style={{ color: T.silver }}>
+                Paste anything that feels off — a link, a message, a too-good-to-be-true offer —
+                and El Guardián checks it in seconds.
+                <span style={{ color: T.silverDim }}> Not sure where to start? Tap an example.</span>
+              </p>
 
-              {/* Quick-ask chips — even 2×2 grid, the interactive hook */}
-              <div className="grid grid-cols-2 gap-2 mb-3">
+              {/* Quick-ask chips — the guided entry point, promoted above the stats */}
+              <div className="grid grid-cols-2 gap-2 mb-4">
                 {QUICK_ASKS.map(c => (
                   <button key={c.label} onClick={() => runSignal(c.q)} disabled={loading}
                     className="text-[10px] font-semibold text-center px-3 py-2 rounded-lg transition-transform hover:scale-[1.03] disabled:opacity-50"
                     style={{ background: `${T.babyBlue}12`, border: `1px solid ${T.babyBlue}40`, color: T.babyBlue }}>
                     {c.label}
                   </button>
+                ))}
+              </div>
+
+              {/* Live stats — secondary context, quieter and demoted below the action */}
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                {[
+                  { label: "ACTIVE THREATS", value: threatFeed?.active_threats ?? "—", color: "#FF8C42" },
+                  { label: "GATES ONLINE",   value: "4 / 4",                          color: T.neonGreen },
+                  { label: "SIGNALS SCANNED", value: threatFeed?.total_seen ?? "—",   color: T.babyBlue },
+                ].map(s => (
+                  <div key={s.label} className="rounded-lg px-3 py-2 text-center"
+                    style={{ background: `${T.royalBlue}12`, border: `1px solid ${T.royalBlue}30` }}>
+                    <div className="text-base font-black font-mono leading-none" style={{ color: s.color }}>{s.value}</div>
+                    <div className="text-[8px] tracking-[0.12em] mt-1" style={{ color: T.silverDim }}>{s.label}</div>
+                  </div>
                 ))}
               </div>
 
@@ -1347,8 +1344,7 @@ export default function CyberShieldCommandCenter() {
                 <>
                   <div className="flex items-center justify-between mb-1 flex-shrink-0">
                     <span className="flex items-center gap-2 text-[11px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>
-                      <motion.span className="text-[13px] leading-none"
-                        animate={{ rotate: 360 }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }}>🌐</motion.span>
+                      <span className="text-[13px] leading-none">🌐</span>
                       WORLD CUP NEWS
                     </span>
                   </div>
