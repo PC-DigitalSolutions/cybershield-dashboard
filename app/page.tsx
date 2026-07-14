@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Shield, Home, Crosshair, ChevronRight } from "lucide-react";
+import { Shield, Home, Crosshair, ChevronRight, Paperclip } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import RichText from "./components/RichText";
 
@@ -101,7 +101,7 @@ const SEVERITY_COLOR: Record<string, string> = {
   INFO:     "#00CFFF",
 };
 
-type GoalieTurn = { role: "user" | "model"; text: string; matches?: number };
+type GoalieTurn = { role: "user" | "model"; text: string; matches?: number; file?: string };
 type Story = { id: number; created: number; story: string; scam_type: string; language: string };
 type StoryFeed = {
   stories: Story[];
@@ -168,6 +168,30 @@ function kickoffLabel(utcDate: string | null): string {
 }
 
 const GATE_TO_INDEX: Record<string, number> = { "Gate A": 0, "Gate B": 1, "Gate C": 2, "Gate D": 3 };
+
+// ── File attachments — photos, PDFs, videos handed to the AI ──────────
+// Caps mirror the backend (src/agents/media.py); keep them in sync.
+type FileKind = "image" | "pdf" | "video";
+const FILE_CAPS_MB: Record<FileKind, number> = { image: 15, pdf: 18, video: 50 };
+const FILE_ACCEPT = "image/*,application/pdf,video/*";
+
+function fileKind(f: File): FileKind | null {
+  const t = (f.type || "").toLowerCase();
+  if (t.startsWith("image/")) return "image";
+  if (t === "application/pdf") return "pdf";
+  if (t.startsWith("video/")) return "video";
+  return null;
+}
+function fileKindIcon(k: FileKind | null): string {
+  return k === "image" ? "🖼️" : k === "pdf" ? "📄" : k === "video" ? "🎬" : "📎";
+}
+function fileError(f: File): string | null {
+  const k = fileKind(f);
+  if (!k) return "Only photos, PDFs, or videos can be analyzed.";
+  const cap = FILE_CAPS_MB[k];
+  if (f.size > cap * 1024 * 1024) return `That ${k} is too large — keep it under ${cap}MB.`;
+  return null;
+}
 
 const SIG_STRIP = /(?:^|\n).*(?:Strength[.\s]*Vigilance[.\s]*Intelligence|CyberShield AI\s*[—–-]\s*El Guardi[áa]n).*$/gis;
 function stripSignature(text: string): string {
@@ -309,6 +333,40 @@ function StatRow({ label, value, color }: { label: string; value: React.ReactNod
   );
 }
 
+// Paperclip button + hidden file input — attach a photo, PDF, or video.
+function AttachButton({ onPick, disabled, color = T.babyBlue }: { onPick: (f: File) => void; disabled?: boolean; color?: string }) {
+  const ref = useRef<HTMLInputElement>(null);
+  return (
+    <>
+      <input ref={ref} type="file" accept={FILE_ACCEPT} className="hidden"
+        onChange={e => { const f = e.target.files?.[0]; if (f) onPick(f); e.target.value = ""; }} />
+      <motion.button type="button" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+        onClick={() => ref.current?.click()} disabled={disabled}
+        title="Attach a photo, PDF, or video"
+        aria-label="Attach a photo, PDF, or video"
+        className="flex items-center justify-center px-3 rounded-lg flex-shrink-0 disabled:opacity-50"
+        style={{ background: `${color}12`, border: `1px solid ${color}45`, color }}>
+        <Paperclip className="w-4 h-4" />
+      </motion.button>
+    </>
+  );
+}
+
+// Chip showing the currently attached file, with a clear button.
+function FileChip({ file, onClear, color = T.babyBlue }: { file: File; onClear: () => void; color?: string }) {
+  const k = fileKind(file);
+  return (
+    <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] self-start max-w-full"
+      style={{ background: `${color}12`, border: `1px solid ${color}40`, color: T.silver }}>
+      <span className="text-[13px] flex-shrink-0">{fileKindIcon(k)}</span>
+      <span className="truncate" style={{ maxWidth: 180 }} title={file.name}>{file.name}</span>
+      <span className="flex-shrink-0" style={{ color: T.silverDim }}>{(file.size / (1024 * 1024)).toFixed(1)}MB</span>
+      <button type="button" onClick={onClear} aria-label="Remove attachment"
+        className="ml-1 flex-shrink-0 hover:opacity-70" style={{ color: T.silverDim }}>✕</button>
+    </div>
+  );
+}
+
 function EagleEye() {
   const W = 280, H = 110;
   const CY = 58;
@@ -415,6 +473,7 @@ function GoalieZone({ active }: { active: boolean }) {
   const [turns, setTurns] = useState<GoalieTurn[]>([{ role: "model", text: GOALIE_GREETING }]);
   const [msg, setMsg] = useState("");
   const [sending, setSending] = useState(false);
+  const [attached, setAttached] = useState<File | null>(null);
   const [feed, setFeed] = useState<StoryFeed | null>(null);
   const [showReport, setShowReport] = useState(false);
   const [storyText, setStoryText] = useState("");
@@ -460,18 +519,38 @@ function GoalieZone({ active }: { active: boolean }) {
 
   const send = async (raw?: string) => {
     const text = (raw ?? msg).trim();
-    if (!text || sending) return;
+    const file = attached;
+    if ((!text && !file) || sending) return;
+    if (file) {
+      const err = fileError(file);
+      if (err) { setTurns(t => [...t, { role: "model", text: `🧤 ${err}` }]); setAttached(null); return; }
+    }
     const history = turns.map(t => ({ role: t.role, text: t.text }));
-    setTurns(t => [...t, { role: "user", text }]);
+    const fileLabel = file ? `${fileKindIcon(fileKind(file))} ${file.name}` : undefined;
+    setTurns(t => [...t, { role: "user", text: text || "(sent a file for the Goalie to check)", file: fileLabel }]);
     setMsg("");
+    setAttached(null);
     setSending(true);
     try {
-      const res = await fetch(`${API_BASE}/goalie/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, history }),
-      });
+      let res: Response;
+      if (file) {
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("message", text);
+        fd.append("history", JSON.stringify(history));
+        res = await fetch(`${API_BASE}/goalie/chat/file`, { method: "POST", body: fd });
+      } else {
+        res = await fetch(`${API_BASE}/goalie/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text, history }),
+        });
+      }
       const data = await res.json();
+      if (!res.ok) {
+        setTurns(t => [...t, { role: "model", text: `🧤 ${data.detail || "Could not read that — try again."}` }]);
+        return;
+      }
       setTurns(t => [...t, { role: "model", text: data.response ?? "…", matches: data.community_matches }]);
     } catch {
       setTurns(t => [...t, { role: "model", text: "Connection to the box dropped — verify the backend is running on 127.0.0.1:8000." }]);
@@ -542,6 +621,11 @@ function GoalieZone({ active }: { active: boolean }) {
               <div key={i} className="flex justify-end">
                 <div className="max-w-[82%] px-3.5 py-2.5 rounded-2xl rounded-br-md text-[13px] leading-relaxed break-words"
                   style={{ background: `${T.royalBlue}55`, border: `1px solid ${T.royalBlue}`, color: "#E3F2FD" }}>
+                  {t.file && (
+                    <div className="flex items-center gap-1.5 mb-1 text-[10px] font-semibold" style={{ color: T.babyBlue }}>
+                      {t.file}
+                    </div>
+                  )}
                   {t.text}
                 </div>
               </div>
@@ -611,13 +695,15 @@ function GoalieZone({ active }: { active: boolean }) {
               ))}
             </div>
           )}
+          {attached && <FileChip file={attached} onClear={() => setAttached(null)} />}
           <div className="flex gap-2 items-stretch">
+            <AttachButton onPick={setAttached} disabled={sending} />
             <textarea value={msg} rows={2}
               onChange={e => setMsg(e.target.value)}
               onKeyDown={e => {
                 if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
               }}
-              placeholder="Paste the suspicious message here… / Pega aquí el mensaje sospechoso…"
+              placeholder={attached ? "Add a note (optional) and send… / Añade una nota (opcional)…" : "Paste the suspicious message here… / Pega aquí el mensaje sospechoso…"}
               className="flex-1 px-3.5 py-2.5 text-[12px] outline-none rounded-lg resize-none leading-relaxed cs-scroll"
               style={{ background: "#08121f", border: `1px solid ${T.babyBlue}45`, color: T.silver }}
             />
@@ -756,6 +842,7 @@ export default function CyberShieldCommandCenter() {
     "El Guardián is ready to tackle any breach with knowledge, defense plays, and ways to keep you safe during the FIFA World Cup 2026!!"
   );
   const [loading, setLoading]   = useState(false);
+  const [attached, setAttached] = useState<File | null>(null);
   const [activeAgent, setActiveAgent] = useState<number | null>(null);
   const [agentReports, setAgentReports] = useState<AgentReport[]>([]);
   const [analyzedCount, setAnalyzedCount] = useState(0);
@@ -827,7 +914,47 @@ export default function CyberShieldCommandCenter() {
     }
   };
 
-  const handleActivate = () => runSignal(input);
+  // Upload path — hand a photo, PDF, or video to El Guardián + the gates.
+  const runSignalFile = async (file: File, note: string) => {
+    setLoading(true);
+    setAgentReports([]);
+    const kind = fileKind(file);
+    setQuery(`${fileKindIcon(kind)} ${file.name}${note ? " — " + note : ""}`);
+    setAnalyzedCount(c => c + 1);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("note", note);
+      const res = await fetch(`${API_BASE}/analyze/file`, { method: "POST", body: fd });
+      const data = await res.json();
+      if (res.ok && data.status === "ok" && data.response) {
+        setResponse(data.response);
+        const reports: AgentReport[] = data.agents ?? [];
+        setAgentReports(reports);
+        if (reports.length) setBlockedCount(c => c + 1);
+        const primary = data.primary_gate ? GATE_TO_INDEX[data.primary_gate] : -1;
+        setActiveAgent(primary >= 0 ? primary : null);
+      } else {
+        setResponse(data.detail || "El Guardián couldn't read that file. Try another photo, PDF, or video.");
+      }
+    } catch {
+      setResponse("Error contacting backend. Verify FastAPI is running on 127.0.0.1:8000.");
+    } finally {
+      setLoading(false);
+      setInput("");
+      setAttached(null);
+    }
+  };
+
+  const handleActivate = () => {
+    if (attached) {
+      const err = fileError(attached);
+      if (err) { setResponse(`🛡️ ${err}`); setAttached(null); return; }
+      runSignalFile(attached, input.trim());
+      return;
+    }
+    runSignal(input);
+  };
 
   // Tapping a news item hands the headline to El Guardián for a live read.
   const askGuardian = (headline: string) => {
@@ -1166,14 +1293,20 @@ export default function CyberShieldCommandCenter() {
               </Panel>
 
               {/* Input */}
+              {attached && (
+                <div className="w-full mt-2.5 flex-shrink-0">
+                  <FileChip file={attached} onClear={() => setAttached(null)} />
+                </div>
+              )}
               <div className="w-full mt-2.5 flex gap-2 items-stretch flex-shrink-0">
+                <AttachButton onPick={setAttached} disabled={loading} />
                 <div className="flex-1 relative">
                   <textarea value={input} rows={2}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => {
                       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleActivate(); }
                     }}
-                    placeholder="Drop a suspicious link, message, or anything that feels off…"
+                    placeholder={attached ? "Add a note (optional), then Activate Shield…" : "Drop a suspicious link, message, or anything that feels off…"}
                     className="w-full px-4 py-2.5 text-xs outline-none rounded-lg resize-none leading-relaxed transition-all cs-scroll"
                     style={{
                       background: "#08121f",
