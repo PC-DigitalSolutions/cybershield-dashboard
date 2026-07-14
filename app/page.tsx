@@ -837,7 +837,7 @@ export default function CyberShieldCommandCenter() {
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden flex flex-col p-3 gap-2 font-mono"
+    <div className="min-h-screen w-full lg:h-screen lg:w-screen overflow-y-auto lg:overflow-hidden flex flex-col p-3 gap-2 font-mono"
       style={{
         background: T.bg,
         backgroundImage: [
@@ -853,7 +853,7 @@ export default function CyberShieldCommandCenter() {
     >
 
       {/* ── HEADER ── */}
-      <div className="flex items-center justify-between px-2 flex-shrink-0">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-2 flex-shrink-0">
         <div className="flex items-center gap-3">
           <BrandLogo />
           <div>
@@ -891,10 +891,10 @@ export default function CyberShieldCommandCenter() {
       </div>
 
       {/* ── MAIN GRID ── */}
-      <div className="flex gap-3 flex-1 min-h-0">
+      <div className="flex flex-col lg:flex-row gap-3 flex-1 min-h-0">
 
-        {/* LEFT — 240px */}
-        <div className="w-[240px] flex-shrink-0 flex flex-col gap-2">
+        {/* LEFT — 240px on desktop, full-width stacked on mobile */}
+        <div className="w-full lg:w-[240px] flex-shrink-0 flex flex-col gap-2">
 
           <Panel className="flex-shrink-0">
             <div className="p-2 flex flex-col gap-1.5">
@@ -1018,9 +1018,9 @@ export default function CyberShieldCommandCenter() {
           </Panel>
         </div>
 
-        {/* CENTER — flex-1 */}
-        <Panel className="flex-1 flex flex-col min-w-0">
-          <div className="relative flex flex-col items-center h-full px-8 py-3 overflow-hidden">
+        {/* CENTER — flex-1 (min height keeps the console usable when stacked on mobile) */}
+        <Panel className="flex-1 flex flex-col min-w-0 min-h-[80vh] lg:min-h-0">
+          <div className="relative flex flex-col items-center h-full px-4 lg:px-8 py-3 overflow-hidden">
 
             {/* Stadium pitch motif — center circle + halfway line */}
             <div className="absolute inset-0 pointer-events-none" aria-hidden>
@@ -1207,7 +1207,7 @@ export default function CyberShieldCommandCenter() {
         </Panel>
 
         {/* RIGHT — tabbed: table · fixtures · news (one at a time, room to breathe) */}
-        <div className="w-[320px] flex-shrink-0 flex flex-col gap-2 min-h-0">
+        <div className="w-full lg:w-[320px] flex-shrink-0 flex flex-col gap-2 min-h-0">
 
           {/* Segmented tab control */}
           <div className="flex-shrink-0 grid grid-cols-3 gap-1 p-1 rounded-lg"
@@ -1233,7 +1233,7 @@ export default function CyberShieldCommandCenter() {
           </div>
 
           {/* Active tab content */}
-          <Panel className="flex-1 flex flex-col min-h-0" glow>
+          <Panel className="flex-1 flex flex-col min-h-[70vh] lg:min-h-0" glow>
             <div className="p-4 flex flex-col h-full min-h-0">
 
               {/* ── TABLE ── */}
