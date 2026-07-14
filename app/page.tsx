@@ -1019,7 +1019,7 @@ export default function CyberShieldCommandCenter() {
         </div>
 
         {/* CENTER — flex-1 (min height keeps the console usable when stacked on mobile) */}
-        <Panel className="flex-1 flex flex-col min-w-0 min-h-[80vh] lg:min-h-0">
+        <Panel className="flex flex-col min-w-0 max-lg:h-[560px] lg:flex-1 lg:min-h-0">
           <div className="relative flex flex-col items-center h-full px-4 lg:px-8 py-3 overflow-hidden">
 
             {/* Stadium pitch motif — center circle + halfway line */}
@@ -1233,7 +1233,7 @@ export default function CyberShieldCommandCenter() {
           </div>
 
           {/* Active tab content */}
-          <Panel className="flex-1 flex flex-col min-h-[70vh] lg:min-h-0" glow>
+          <Panel className="flex flex-col max-lg:h-[460px] lg:flex-1 lg:min-h-0" glow>
             <div className="p-4 flex flex-col h-full min-h-0">
 
               {/* ── TABLE ── */}
