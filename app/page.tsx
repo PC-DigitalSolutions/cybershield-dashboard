@@ -910,7 +910,9 @@ export default function CyberShieldCommandCenter() {
   const loadedThreatTotal = threatFeed?.threats.filter(t => t.kind === "threat").length ?? 0;
 
   const runSignal = async (raw: string) => {
-    const signal = raw.trim() || "Global shield activation — scan all FIFA venues.";
+    // Analyze exactly what was sent — never substitute a canned signal, which
+    // answered with unrelated tournament chatter on an empty submit.
+    const signal = raw.trim();
     setLoading(true);
     setAgentReports([]);
     setQuery(signal);
