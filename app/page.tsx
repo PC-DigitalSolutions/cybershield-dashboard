@@ -211,7 +211,9 @@ function fileError(f: File): string | null {
   return null;
 }
 
-const SIG_STRIP = /(?:^|\n).*(?:Strength[.\s]*Vigilance[.\s]*Intelligence|CyberShield AI\s*[—–-]\s*El Guardi[áa]n).*$/gis;
+// Matches only the signature's own line: [^\n] keeps it from spanning the whole
+// message, and `m` ends it at the line break rather than the end of the text.
+const SIG_STRIP = /(?:^|\n)[^\n]*(?:Strength[.\s]*Vigilance[.\s]*Intelligence|CyberShield AI\s*[—–-]\s*El Guardi[áa]n)[^\n]*$/gim;
 function stripSignature(text: string): string {
   return text.replace(SIG_STRIP, "").trim();
 }
