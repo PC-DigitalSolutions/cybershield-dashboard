@@ -173,14 +173,27 @@ const GATE_TO_INDEX: Record<string, number> = { "Gate A": 0, "Gate B": 1, "Gate 
 // Caps mirror the backend (src/agents/media.py); keep them in sync.
 type FileKind = "image" | "pdf" | "video";
 const FILE_CAPS_MB: Record<FileKind, number> = { image: 15, pdf: 18, video: 50 };
-const FILE_ACCEPT = "image/*,application/pdf,video/*";
+// Extensions are listed alongside the mime globs because some phone pickers
+// filter on extension only.
+const FILE_ACCEPT =
+  "image/*,application/pdf,video/*,.pdf,.jpg,.jpeg,.png,.webp,.heic,.heif,.mp4,.m4v,.mov,.webm,.3gp";
+
+// Phones often report "" or "application/octet-stream" for a picked file — most
+// visibly for PDFs — so fall back to the extension before rejecting anything.
+const EXT_KIND: Record<string, FileKind> = {
+  pdf: "pdf",
+  png: "image", jpg: "image", jpeg: "image", webp: "image", heic: "image", heif: "image",
+  mp4: "video", m4v: "video", mov: "video", webm: "video", "3gp": "video",
+  mpeg: "video", mpg: "video", avi: "video",
+};
 
 function fileKind(f: File): FileKind | null {
   const t = (f.type || "").toLowerCase();
   if (t.startsWith("image/")) return "image";
   if (t === "application/pdf") return "pdf";
   if (t.startsWith("video/")) return "video";
-  return null;
+  const ext = (f.name || "").toLowerCase().split(".").pop() || "";
+  return EXT_KIND[ext] ?? null;
 }
 function fileKindIcon(k: FileKind | null): string {
   return k === "image" ? "🖼️" : k === "pdf" ? "📄" : k === "video" ? "🎬" : "📎";
@@ -497,6 +510,13 @@ function GoalieZone({ active }: { active: boolean }) {
     setShowReport(true);
   };
 
+  // Reject bad files the moment they're picked — never silently drop one on send.
+  const onPickFile = (f: File) => {
+    const err = fileError(f);
+    if (err) { setTurns(t => [...t, { role: "model", text: `🧤 ${err}` }]); return; }
+    setAttached(f);
+  };
+
   const scrollToBottom = () =>
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
 
@@ -697,7 +717,7 @@ function GoalieZone({ active }: { active: boolean }) {
           )}
           {attached && <FileChip file={attached} onClear={() => setAttached(null)} />}
           <div className="flex gap-2 items-stretch">
-            <AttachButton onPick={setAttached} disabled={sending} />
+            <AttachButton onPick={onPickFile} disabled={sending} />
             <textarea value={msg} rows={2}
               onChange={e => setMsg(e.target.value)}
               onKeyDown={e => {
@@ -912,6 +932,13 @@ export default function CyberShieldCommandCenter() {
       setLoading(false);
       setInput("");
     }
+  };
+
+  // Reject bad files the moment they're picked — never silently drop one on send.
+  const onPickFile = (f: File) => {
+    const err = fileError(f);
+    if (err) { setResponse(`🛡️ ${err}`); return; }
+    setAttached(f);
   };
 
   // Upload path — hand a photo, PDF, or video to El Guardián + the gates.
@@ -1299,7 +1326,7 @@ export default function CyberShieldCommandCenter() {
                 </div>
               )}
               <div className="w-full mt-2.5 flex gap-2 items-stretch flex-shrink-0">
-                <AttachButton onPick={setAttached} disabled={loading} />
+                <AttachButton onPick={onPickFile} disabled={loading} />
                 <div className="flex-1 relative">
                   <textarea value={input} rows={2}
                     onChange={e => setInput(e.target.value)}
