@@ -171,17 +171,20 @@ const GATE_TO_INDEX: Record<string, number> = { "Gate A": 0, "Gate B": 1, "Gate 
 
 // ── File attachments — photos, PDFs, videos handed to the AI ──────────
 // Caps mirror the backend (src/agents/media.py); keep them in sync.
-type FileKind = "image" | "pdf" | "video";
-const FILE_CAPS_MB: Record<FileKind, number> = { image: 15, pdf: 18, video: 50 };
+type FileKind = "image" | "pdf" | "doc" | "video";
+const FILE_CAPS_MB: Record<FileKind, number> = { image: 15, pdf: 18, doc: 18, video: 50 };
 // Extensions are listed alongside the mime globs because some phone pickers
 // filter on extension only.
 const FILE_ACCEPT =
-  "image/*,application/pdf,video/*,.pdf,.jpg,.jpeg,.png,.webp,.heic,.heif,.mp4,.m4v,.mov,.webm,.3gp";
+  "image/*,application/pdf,video/*,text/html,text/plain,text/csv," +
+  ".pdf,.html,.htm,.txt,.md,.csv,.json,.xml,.rtf," +
+  ".jpg,.jpeg,.png,.webp,.heic,.heif,.mp4,.m4v,.mov,.webm,.3gp";
 
 // Phones often report "" or "application/octet-stream" for a picked file — most
 // visibly for PDFs — so fall back to the extension before rejecting anything.
 const EXT_KIND: Record<string, FileKind> = {
   pdf: "pdf",
+  html: "doc", htm: "doc", txt: "doc", md: "doc", csv: "doc", json: "doc", xml: "doc", rtf: "doc",
   png: "image", jpg: "image", jpeg: "image", webp: "image", heic: "image", heif: "image",
   mp4: "video", m4v: "video", mov: "video", webm: "video", "3gp": "video",
   mpeg: "video", mpg: "video", avi: "video",
@@ -192,17 +195,19 @@ function fileKind(f: File): FileKind | null {
   if (t.startsWith("image/")) return "image";
   if (t === "application/pdf") return "pdf";
   if (t.startsWith("video/")) return "video";
+  if (t.startsWith("text/") || t === "application/json" || t === "application/rtf" || t === "application/xml") return "doc";
   const ext = (f.name || "").toLowerCase().split(".").pop() || "";
   return EXT_KIND[ext] ?? null;
 }
 function fileKindIcon(k: FileKind | null): string {
-  return k === "image" ? "🖼️" : k === "pdf" ? "📄" : k === "video" ? "🎬" : "📎";
+  return k === "image" ? "🖼️" : k === "pdf" ? "📄" : k === "doc" ? "📑" : k === "video" ? "🎬" : "📎";
 }
 function fileError(f: File): string | null {
   const k = fileKind(f);
-  if (!k) return "Only photos, PDFs, or videos can be analyzed.";
+  if (!k) return "Send a photo, a document (PDF/HTML/TXT/CSV), or a video.";
   const cap = FILE_CAPS_MB[k];
-  if (f.size > cap * 1024 * 1024) return `That ${k} is too large — keep it under ${cap}MB.`;
+  const label = k === "doc" ? "document" : k;
+  if (f.size > cap * 1024 * 1024) return `That ${label} is too large — keep it under ${cap}MB.`;
   return null;
 }
 
