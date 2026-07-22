@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026 FIFA World Cup Cyber Threat Intelligence — PC Digital Solutions</title>
+<style>
+  :root{
+    --navy:#0b1f3a; --navy2:#13294b; --teal:#0e7c86; --teal-b:#10b3c4;
+    --ink:#1a222c; --muted:#5b6b7b; --line:#e2e8f0; --line2:#cbd5e1;
+    --paper:#ffffff; --wash:#f6f8fb;
+    --A:#c2410c; --B:#1d4ed8; --C:#b91c1c; --D:#6d28d9;
+    --crit:#b91c1c; --high:#c2410c; --med:#b45309;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  body{
+    margin:0; color:var(--ink); background:var(--wash);
+    font-family:Georgia,"Iowan Old Style","Times New Roman",serif;
+    font-size:16px; line-height:1.62;
+  }
+  .sheet{
+    max-width:820px; margin:24px auto; background:var(--paper);
+    padding:64px 68px; box-shadow:0 2px 20px rgba(11,31,58,.10);
+    border:1px solid var(--line);
+  }
+  h1,h2,h3,h4,.brand,.chip,.badge,.meta,th,.tag,.kicker{
+    font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  }
+  h1{font-size:30px; line-height:1.18; color:var(--navy); margin:8px 0 4px; letter-spacing:-.01em}
+  h2{font-size:21px; color:var(--navy); margin:38px 0 12px; padding-bottom:7px; border-bottom:2px solid var(--line); letter-spacing:-.01em}
+  h3{font-size:16.5px; color:var(--navy2); margin:24px 0 8px}
+  h4{font-size:14px; color:var(--teal); margin:18px 0 6px; text-transform:uppercase; letter-spacing:.05em}
+  p{margin:10px 0}
+  a{color:var(--teal); word-break:break-word}
+  small{color:var(--muted)}
+  strong{color:#0d1b2e}
+  ul,ol{margin:10px 0 10px 4px; padding-left:22px}
+  li{margin:5px 0}
+  code{font-family:ui-monospace,"Cascadia Code",Consolas,monospace; font-size:13px; background:#eef2f7; padding:1px 5px; border-radius:4px; color:#12324a}
+  pre{background:var(--navy); color:#dbeafe; padding:16px 18px; border-radius:8px; overflow:auto; font-size:12.5px; line-height:1.5}
+  pre code{background:none; color:inherit; padding:0}
+
+  /* Cover */
+  .cover{border-top:6px solid var(--teal); padding-top:26px}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:700; color:var(--navy); letter-spacing:.02em; font-size:13px; text-transform:uppercase}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--teal-b);box-shadow:0 0 0 3px rgba(16,179,196,.2)}
+  .kicker{color:var(--teal); font-weight:700; font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; margin-top:26px}
+  .subtitle{font-size:15px; color:var(--muted); font-style:italic; margin:2px 0 20px}
+  .meta{display:grid; grid-template-columns:1fr 1fr; gap:8px 26px; font-size:12.5px; color:var(--ink); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:16px 0; margin:14px 0 6px}
+  .meta div{display:flex; gap:8px}
+  .meta b{color:var(--muted); font-weight:600; min-width:92px; display:inline-block}
+  .tlp{display:inline-block; font-family:"Segoe UI",sans-serif; font-size:11px; font-weight:700; letter-spacing:.08em; color:#0a5c2a; background:#e7f6ec; border:1px solid #b7e3c4; padding:2px 8px; border-radius:4px}
+
+  /* Callouts */
+  .callout{border-left:4px solid var(--teal); background:var(--wash); padding:12px 16px; margin:16px 0; border-radius:0 6px 6px 0; font-size:14.5px}
+  .callout.warn{border-left-color:var(--high); background:#fff7ed}
+  .callout.key{border-left-color:var(--navy); background:#eff4fb}
+  .callout .tag{display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:3px}
+
+  /* Tables */
+  table{width:100%; border-collapse:collapse; margin:16px 0; font-size:13px}
+  th{background:var(--navy); color:#fff; text-align:left; padding:9px 10px; font-size:11.5px; font-weight:600; letter-spacing:.02em}
+  td{padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top}
+  tr:nth-child(even) td{background:#fafcfe}
+  .src{color:var(--muted); font-style:italic; font-size:11.5px}
+
+  /* Badges + chips */
+  .badge{display:inline-block; font-size:11px; font-weight:700; color:#fff; border-radius:4px; padding:1px 6px; font-family:"Segoe UI",sans-serif}
+  .gA{background:var(--A)} .gB{background:var(--B)} .gC{background:var(--C)} .gD{background:var(--D)}
+  .chip{display:inline-block; font-size:10.5px; font-weight:700; border-radius:20px; padding:1px 9px; font-family:"Segoe UI",sans-serif; border:1px solid}
+  .c-crit{color:var(--crit); border-color:var(--crit); background:#fdeaea}
+  .c-high{color:var(--high); border-color:var(--high); background:#fdf0e7}
+  .c-med{color:var(--med); border-color:var(--med); background:#fbf3e3}
+  .yes{color:#0a5c2a; font-weight:700}
+
+  .statgrid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:18px 0}
+  .stat{background:var(--wash); border:1px solid var(--line); border-radius:8px; padding:12px 14px; text-align:center}
+  .stat .n{font-family:"Segoe UI",sans-serif; font-size:26px; font-weight:800; color:var(--navy); line-height:1}
+  .stat .l{font-size:11px; color:var(--muted); margin-top:5px}
+
+  hr{border:none; border-top:1px solid var(--line); margin:30px 0}
+  .foot{margin-top:34px; padding-top:14px; border-top:2px solid var(--line); font-size:11.5px; color:var(--muted); text-align:center; font-family:"Segoe UI",sans-serif}
+  .refs{font-size:12.5px}
+  .refs li{margin:7px 0}
+
+  @media print{
+    body{background:#fff; font-size:11.5pt}
+    .sheet{box-shadow:none; border:none; margin:0; max-width:none; padding:0}
+    @page{size:A4; margin:18mm 16mm}
+    h2{page-break-after:avoid} h3{page-break-after:avoid}
+    table,pre,.callout,.statgrid,.stat{page-break-inside:avoid}
+    .breakbefore{page-break-before:always}
+    a{color:var(--ink); text-decoration:none}
+    .noprint{display:none}
+  }
+  @media (max-width:640px){
+    .sheet{padding:30px 20px} .meta,.statgrid{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <!-- ── Cover ── -->
+  <section class="cover">
+    <div class="brand"><span class="dot"></span> PC Digital Solutions · Research &amp; Intelligence</div>
+    <div class="kicker">Technical Threat Intelligence White Paper</div>
+    <h1>The 2026 FIFA World Cup Cyber Threat Landscape</h1>
+    <div class="subtitle">A landscape assessment and empirical evaluation of multi-agent threat triage — featuring CyberShield AI · El Guardián</div>
+    <div class="meta">
+      <div><b>Author</b> Aldo Chernes Pineda</div>
+      <div><b>Role</b> IAM / Cybersecurity Engineer</div>
+      <div><b>Publisher</b> PC Digital Solutions</div>
+      <div><b>Platform</b> CyberShield AI — El Guardián</div>
+      <div><b>Date</b> 21 July 2026</div>
+      <div><b>Version</b> 1.0</div>
+      <div><b>Contact</b> aacp@pcdigitalsolutions.tech</div>
+      <div><b>Classification</b> <span class="tlp">TLP:CLEAR — PUBLIC</span></div>
+    </div>
+  </section>
+
+  <!-- ── Executive Summary ── -->
+  <h2>Executive Summary</h2>
+  <p>The 2026 FIFA World Cup — the largest edition in the tournament's history, co-hosted across the United States, Mexico, and Canada — closed in July 2026 with, by federal accounts, no major on-the-ground security incident. The <strong>digital</strong> contest was a different story. In the months surrounding the tournament, threat researchers tracked an unprecedented surge of fan-directed cybercrime: pixel-perfect clones of FIFA's official ticketing portal, industrial-scale domain registration, Android banking malware, AI-generated disinformation, and state-nexus activity against event-adjacent critical infrastructure.</p>
+  <p>This paper does two things. First, it consolidates the <strong>published threat intelligence</strong> on the 2026 World Cup from a range of vendors and agencies — Group-IB, Check Point, Recorded Future, Palo Alto Unit 42, FortiGuard Labs, the FBI's IC3, and CISA — into a single landscape assessment. Second, and more distinctively, it presents <strong>empirical results from CyberShield AI</strong>, a multi-agent threat-triage platform built by PC Digital Solutions, run against that documented threat set.</p>
+  <p>CyberShield is presented here as an <strong>architectural proof-of-concept and analytical framework</strong>, not as an enterprise sensor deployed on FIFA infrastructure. Its value in this report is demonstrable: when the real, documented attack vectors of the tournament are fed through its Central Nervous System (the <code>ElGuardianCNS</code> routing engine), the platform classifies each vector into the correct specialist domain, resolves conflicts between competing classifications through an explicit severity hierarchy, produces a structured Unified Threat Report with MITRE ATT&amp;CK references, and escalates multi-domain events for human review — all at effectively zero inference cost through a two-stage design.</p>
+
+  <div class="statgrid">
+    <div class="stat"><div class="n">9/10</div><div class="l">documented vectors routed correctly</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">false positives on benign control</div></div>
+    <div class="stat"><div class="n">909</div><div class="l">live headlines assessed in one cycle</div></div>
+    <div class="stat"><div class="n">222</div><div class="l">flagged as threats, zero LLM cost</div></div>
+  </div>
+
+  <p><b>Key findings.</b></p>
+  <ul>
+    <li><strong>Directed triage:</strong> Across 10 documented World Cup threat vectors, the platform routed 9/10 correctly, cleared a benign control with no false positive, escalated 4 multi-domain events to human-in-the-loop review, and correctly promoted a synthetic-media threat above a co-occurring scam through its conflict-resolution arbiter.</li>
+    <li><strong>Live monitoring:</strong> In a single captured polling session (21 July 2026), the live monitor ingested <strong>909 real World Cup headlines</strong> across 12 threat queries and flagged <strong>222</strong> as threats — at keyword speed, with no LLM cost — surfacing the exact deepfake wave and state-nexus breach activity independently reported by major vendors.</li>
+    <li><strong>Honest limitations</strong> are documented rather than hidden: a compliance-gate blind spot on <em>proactive</em> PII harvesting, a debatable MITRE mapping on synthetic media, and (until the change in §7) the absence of durable storage for the monitor's daily output.</li>
+  </ul>
+  <p>CyberShield's design intent belongs in this summary as much as its results: the platform exists to bring enterprise-grade defense logic to the users enterprise security has always overlooked — non-technical fans and multilingual communities — and it is trained <em>by</em> them, through a consent-based community reporting loop developed in partnership with the Raíces Cyber Organization. Its accessibility mission and its technical rigor are one argument, not two.</p>
+  <p>The strategic conclusion is that the fan-facing layer — ordinary people buying tickets, streaming matches, and reacting to viral clips — was the dominant attack surface of the 2026 World Cup, and that lightweight, cost-aware, multi-domain triage aimed at that layer is both technically viable and operationally valuable for the large-scale global events that follow.</p>
+
+  <!-- ── 1. Methodology ── -->
+  <h2 class="breakbefore">1 · Methodology &amp; Scope</h2>
+  <h3>1.1 What this report is — and is not</h3>
+  <p>This white paper is an <strong>analytical framework study</strong>. Its claims about the external threat landscape are drawn from published third-party reporting, cited inline and in the References section; PC Digital Solutions did not independently collect that primary telemetry. Its claims about CyberShield AI are drawn from <strong>direct, reproducible runs of the platform's own code</strong>, captured on 21 July 2026 and preserved as machine-readable evidence.</p>
+  <p>CyberShield AI is <strong>not</strong> represented as a security control deployed on FIFA, sponsor, or host-nation infrastructure, and no claim is made that it mitigated live attacks in production during the tournament. Where the platform ran against live data (§6), that is stated explicitly and dated; where it ran against curated representations of documented vectors (§5), that is stated explicitly as well.</p>
+  <h3>1.2 The three evidence layers</h3>
+  <table>
+    <tr><th>Layer</th><th>Source</th><th>Nature of evidence</th></tr>
+    <tr><td><b>A — Landscape</b></td><td>Group-IB, Check Point, Recorded Future, Unit 42, FortiGuard, FBI IC3, CISA</td><td>Published, cited third-party intelligence</td></tr>
+    <tr><td><b>B — Directed triage</b></td><td>CyberShield <code>ElGuardianCNS.route_to_agent()</code></td><td>10 documented vectors → real Unified Threat Reports</td></tr>
+    <tr><td><b>C — Live monitoring</b></td><td>CyberShield <code>LiveThreatMonitor.poll_once()</code></td><td>One captured live session against Google News RSS</td></tr>
+  </table>
+  <h3>1.3 Reproducibility</h3>
+  <p>Layer B was produced by submitting ten threat signals — each phrased to represent a documented, vendor-attributed attack vector — to the routing engine and recording the complete Unified Threat Report (UTR) returned for each. Layer C was produced by running the production monitor loop for a single polling cycle and recording its snapshot and per-headline classifications. Both datasets are retained as JSON; report identifiers and UTC timestamps in this paper correspond to those artifacts.</p>
+  <h3>1.4 Community validation and partnership</h3>
+  <p>CyberShield was not built in isolation. Its detection logic and public-facing design were developed and stress-tested in partnership with the <strong>Raíces Cyber Organization</strong> — a 501(c)(3) nonprofit — and <strong>Latinxs for Cybersecurity</strong>, with a cohort of beta testers contributing real, consented scam reports. That community grounding is a methodological asset rather than a footnote: the fan-facing threats analyzed in this paper are the same threats the community brought to the platform, which keeps the analysis anchored to what real users actually encountered instead of a lab abstraction.</p>
+
+  <!-- ── 2. Landscape ── -->
+  <h2 class="breakbefore">2 · The 2026 World Cup Threat Landscape</h2>
+  <p>Every global tournament is a demand shock that fraud follows. The 2026 edition, with the largest ticket inventory and broadcast audience in the event's history, produced the largest fan-directed cybercrime surge yet measured.</p>
+  <h3>2.1 Industrial-scale malicious infrastructure</h3>
+  <ul>
+    <li><strong>Check Point</strong> recorded <strong>9,741 fraudulent World Cup–related domains registered in April 2026 alone — more than five times the peak monthly volume seen during Qatar 2022.</strong></li>
+    <li>Across January–May 2026, trackers observed <strong>more than 13,000</strong> new FIFA World Cup 2026–themed domains, of which roughly <strong>8.8%</strong> were assessed as malicious or suspicious.</li>
+    <li>The <strong>FBI's IC3</strong> issued PSA <strong>260527 on 27 May 2026</strong>, warning of active spoofing of the FIFA website and listing dozens of known fraudulent domains.</li>
+  </ul>
+  <h3>2.2 GHOST STADIUM: a professional fraud operation</h3>
+  <p>The most sophisticated operation attributed publicly was <strong>GHOST STADIUM</strong>, a Chinese-speaking threat actor first observed by <strong>Group-IB</strong> in November 2025 and identified as one of four independent actors targeting the tournament:</p>
+  <ul>
+    <li><strong>300+ phishing domains</strong> cloning FIFA's official website, including a replicated single sign-on (SSO) flow and multi-language support across 11 languages.</li>
+    <li>Infrastructure analysis tied the network together through <strong>shared SSL certificates and identical Meta Pixel tracking IDs</strong>, linking it to a common set of advertising accounts.</li>
+    <li>Group-IB's wider investigation attributed <strong>six fraud schemes and 4,300+ fraudulent domains</strong> to the tournament ecosystem, with potential victim counts exceeding <strong>47,400</strong> for premium-ticket fraud alone and exposure estimated between <strong>$71M and $474M</strong>.</li>
+    <li>More than <strong>2,500 FIFA credential pairs</strong> were observed on dark-web markets at $5–$50 each.</li>
+  </ul>
+  <h3>2.3 The fan-facing vector catalog</h3>
+  <p>Reporting from FortiGuard Labs, Rescana, KnowBe4, and others converges on a consistent catalog of fan-directed techniques:</p>
+  <ul>
+    <li><span class="badge gA">FRAUD</span> <strong>Fake ticketing &amp; resale portals</strong> replicating FIFA branding and, for GHOST STADIUM, its real SSO workflow.</li>
+    <li><span class="badge gA">FRAUD</span> <strong>Phishing &amp; smishing</strong> to credential-harvest pages — KnowBe4 tracked a <strong>22-fold increase</strong> in World Cup phishing from April 2026.</li>
+    <li><span class="badge gA">FRAUD</span> <strong>Android banking malware</strong> (<em>Massiv</em>, <em>Perseus</em>) and infostealers (<em>Vidar</em>, <em>LummaC2</em>, <em>RedLine</em>) in fake streaming/ticket apps.</li>
+    <li><span class="badge gA">FRAUD</span> <strong>Carder resale</strong> — Recorded Future documented a <strong>33-domain</strong> network buying real tickets with stolen cards for resale.</li>
+    <li><span class="badge gC">SYNTHETIC</span> <strong>AI-generated disinformation &amp; deepfakes</strong> impersonating officials, players, and organizers.</li>
+    <li><span class="badge gB">COMPLIANCE</span> <strong>Fake recruitment sites</strong> (e.g. <code>jobs-fifa.com</code>) harvesting passports and PII.</li>
+  </ul>
+  <h3>2.4 State-nexus and infrastructure activity</h3>
+  <p>Beyond fan-directed crime, <strong>CISA</strong> confirmed an active Iranian-affiliated campaign (advisory <strong>AA26-097A</strong>) against internet-exposed PLCs in U.S. water, energy, and municipal targets, and reported cyber and physical vulnerability assessments at <strong>10 host stadiums</strong> plus base camps. The <strong>Canadian Centre for Cyber Security</strong> assessed cybercrime as the primary threat to citizens around the tournament.</p>
+  <div class="callout key"><span class="tag">Landscape takeaway</span>The tournament's dominant attack surface was not the stadium network — it was the fan. Ticketing, streaming, and social reaction were where the volume was, and where the least-protected users were exposed.</div>
+
+  <h3>2.5 The defensive response: an accessible, fan-facing agent</h3>
+  <p>If the fan is the attack surface, the fan is where defense has to reach — and that is exactly where the security industry does not go. Enterprise anti-fraud tooling is built for SOC analysts, priced for enterprises, and delivered in English. The person most exposed to a World Cup scam — a first-time ticket buyer, a non-technical fan, someone reading a fraudulent message in Spanish — has nowhere to turn that speaks their language, literally or figuratively.</p>
+  <p>CyberShield's <strong>Anti-Scammer Goalie</strong> <span class="badge gA">A</span> is the direct answer to that gap: a fan-facing anti-scammer agent whose entire premise is accessibility. Its opening prompt is an invitation — <em>"Paste any message, offer, or profile that feels off"</em> — not a console. And because its analysis runs through the model end to end rather than through a translated interface wrapper, it is <strong>language-native</strong>: a user writes in their own words and is answered in their own words, in whatever language they use. The engineering decisions in §3 all serve that single design intent — enterprise-grade defense logic, delivered in plain language, for free.</p>
+
+  <!-- ── 3. Architecture ── -->
+  <h2 class="breakbefore">3 · Platform Architecture in Brief</h2>
+  <p>CyberShield's engine is the <strong><code>ElGuardianCNS</code></strong> — a Central Nervous System that classifies any incoming signal and routes it to one of four specialist gates.</p>
+  <table>
+    <tr><th>Gate</th><th>Specialist agent</th><th>Domain</th></tr>
+    <tr><td><span class="badge gA">A</span></td><td>Anti-Scammer Goalie</td><td>Scams, phishing, fraud, fake tickets, credential/payment theft</td></tr>
+    <tr><td><span class="badge gB">B</span></td><td>Sideline Referee</td><td>Data privacy &amp; compliance — GDPR, LGPD, Mexico LFPDPPP, unauthorized access</td></tr>
+    <tr><td><span class="badge gC">C</span></td><td>Red Card Sentinel</td><td>Deepfakes, synthetic media, manipulated broadcasts</td></tr>
+    <tr><td><span class="badge gD">D</span></td><td>Las Barras Bravas Triage</td><td>Infrastructure — DDoS, traffic floods, bot surges, telemetry anomalies</td></tr>
+  </table>
+  <p>Two design decisions govern the results below:</p>
+  <ol>
+    <li><strong>Two-stage detection.</strong> A cheap keyword/gate pass classifies <em>every</em> signal in microseconds at zero cost; the expensive LLM layer is invoked only on demand. This is what makes monitoring 900+ headlines per cycle economically trivial.</li>
+    <li><strong>The Primary Arbiter.</strong> When a signal trips multiple gates, the CNS resolves the conflict through a fixed severity hierarchy — <strong>Gate C &gt; Gate A &gt; Gate B &gt; Gate D</strong> — runs all triggered agents, escalates for <strong>human-in-the-loop (HITL)</strong> review, and bundles everything into one <strong>Unified Threat Report</strong> with a stable report ID and MITRE ATT&amp;CK reference.</li>
+  </ol>
+  <h3>3.1 The community defense loop — users as the training set</h3>
+  <p>The platform is not static. Its <strong>Community Scam Wall</strong> turns every reported scam into shared defense. A submitted story is <strong>automatically PII-scrubbed on ingest</strong> (emails and phone numbers stripped), stored with a scam-type tag <strong>only under explicit consent</strong> to share anonymously, and then matched against future conversations. When the Goalie recognizes a pattern the community has already flagged, it surfaces a <code>COMMUNITY INTEL ×N</code> corroboration badge — crowd-sourced evidence that the user is not the first to be targeted. The result is a network defense built directly into the product: <strong>every victim who speaks up measurably protects the next</strong>, and the user is reframed from someone being protected into a <em>Defender #N</em> on the wall. In machine-learning terms, the community is the training set.</p>
+
+  <!-- ── 4. Reading a UTR ── -->
+  <h3>4 · Reading a Unified Threat Report</h3>
+  <p>Each directed-triage run returns a structured UTR. Fields referenced in §5: <code>report_id</code> (stable identifier), <code>triggered_gates</code> / <code>primary_gate</code> / <code>primary_agent</code> (routing decision), <code>severity</code> (Critical/High/Medium), <code>escalation_required</code> (true when &gt;1 gate fires, driving HITL), <code>mitre_attack_id</code>, <code>recommended_actions</code> (de-duplicated playbook), and <code>agent_outputs</code> (the full per-gate verdict set).</p>
+
+  <!-- ── 5. Directed triage ── -->
+  <h2 class="breakbefore">5 · Platform Performance — Directed Triage <small>(Evidence Layer B)</small></h2>
+  <p>Ten signals, each representing a documented and vendor-attributed World Cup vector, were routed through the engine.</p>
+  <table>
+    <tr><th>#</th><th>Documented vector (source)</th><th>Gates</th><th>Primary</th><th>Sev.</th><th>Esc.</th><th>MITRE</th></tr>
+    <tr><td>01</td><td>Cloned FIFA SSO credential-harvest portal <span class="src">Group-IB / GHOST STADIUM</span></td><td><span class="badge gA">A</span> <span class="badge gB">B</span></td><td>Goalie</td><td><span class="chip c-high">HIGH</span></td><td class="yes">✔ HITL</td><td>T1566</td></tr>
+    <tr><td>02</td><td>Deepfaked FIFA official pushing a fake giveaway <span class="src">FortiGuard / IC3</span></td><td><span class="badge gA">A</span> <span class="badge gC">C</span></td><td><b>Sentinel</b></td><td><span class="chip c-crit">CRITICAL</span></td><td class="yes">✔ HITL</td><td>T1608.005</td></tr>
+    <tr><td>03</td><td>Android banking malware in a fake streaming app <span class="src">Group-IB / Rescana</span></td><td><span class="badge gA">A</span></td><td>Goalie</td><td><span class="chip c-high">HIGH</span></td><td>—</td><td>T1566</td></tr>
+    <tr><td>04</td><td>Ticketing-platform DDoS + bot surge <span class="src">Unit 42 / CCCS</span></td><td><span class="badge gD">D</span></td><td>Las Barras</td><td><span class="chip c-high">HIGH</span></td><td>—</td><td>T1498</td></tr>
+    <tr><td>05</td><td>Carder ring buying real tickets with stolen cards <span class="src">Recorded Future</span></td><td><span class="badge gA">A</span></td><td>Goalie</td><td><span class="chip c-high">HIGH</span></td><td>—</td><td>T1566</td></tr>
+    <tr><td>06</td><td>Leaked fan passport/PII dark-web dump <span class="src">Group-IB</span></td><td><span class="badge gB">B</span></td><td>Referee</td><td><span class="chip c-med">MEDIUM</span></td><td>—</td><td>T1020</td></tr>
+    <tr><td>07</td><td>FBI-listed typosquatted FIFA spoof domains <span class="src">IC3 PSA260527</span></td><td><span class="badge gA">A</span></td><td>Goalie</td><td><span class="chip c-high">HIGH</span></td><td>—</td><td>T1566</td></tr>
+    <tr><td>08</td><td>Bot-flood-fronted SSO phishing kit <span class="src">Check Point + Group-IB</span></td><td><span class="badge gA">A</span> <span class="badge gD">D</span></td><td>Goalie</td><td><span class="chip c-high">HIGH</span></td><td class="yes">✔ HITL</td><td>T1566</td></tr>
+    <tr><td>09</td><td>Fake FIFA recruitment PII harvest, <code>jobs-fifa.com</code> <span class="src">Rescana / KnowBe4</span></td><td><span class="badge gA">A</span> <span class="badge gB">B</span></td><td>Goalie</td><td><span class="chip c-high">HIGH</span></td><td class="yes">✔ HITL</td><td>T1566</td></tr>
+    <tr><td>10</td><td><b>Control</b> — benign fan question</td><td>none</td><td>—</td><td>—</td><td>—</td><td><span class="src">cleared</span></td></tr>
+  </table>
+  <h3>5.1 Aggregate results</h3>
+  <ul>
+    <li><strong>9/10 threat vectors routed to the correct specialist domain.</strong></li>
+    <li><strong>0 false positives</strong> — the benign control (#10, <em>"What time does the opening match kick off at MetLife Stadium?"</em>) triggered no gate and produced no UTR.</li>
+    <li><strong>4 events auto-escalated to human-in-the-loop</strong> (#01, #02, #08, #09) — every multi-gate event.</li>
+    <li><strong>MITRE coverage:</strong> Phishing (T1566), Stage Capabilities: Link Target (T1608.005), Network Denial of Service (T1498), Automated Exfiltration (T1020).</li>
+  </ul>
+  <h3>5.2 The arbiter under conflict <small>(Report <code>CS-IV-9D05BD23</code>)</small></h3>
+  <p>Signal #02 is the clearest demonstration of the design. A deepfaked FIFA official promoting a fraudulent giveaway is <em>simultaneously</em> a scam (Gate A) and synthetic media (Gate C). Both agents fired — <span class="badge gA">A</span> Goalie → <code>THREAT DETECTED</code> (High) and <span class="badge gC">C</span> Sentinel → <code>RED CARD — Synthetic Media Detected</code> (Critical). The arbiter applied the hierarchy <strong>C &gt; A</strong>, promoted the synthetic-media verdict to <strong>primary</strong>, raised the report to <strong>Critical</strong>, and escalated to HITL — rather than letting the more common "scam" label bury the more dangerous disinformation classification. This is what distinguishes domain-aware triage from a flat classifier.</p>
+  <h3>5.3 A limitation we are documenting, not hiding <small>(Report <code>CS-IV-D0AF5639</code>)</small></h3>
+  <div class="callout warn"><span class="tag">Documented limitation</span>Signal #09 — the <code>jobs-fifa.com</code> recruitment PII harvest — routed correctly overall (primary Gate A, High, escalated), but the <strong>Sideline Referee (Gate B) returned <code>COMPLIANT / PLAY ON</code>.</strong> The compliance scanner keys on breach-event language ("leaked," "exposed," "breach"); a site <em>proactively collecting</em> passports before any breach does not match that lexicon. The threat was still caught by Gate A and correctly escalated — nothing slipped through — but the compliance gate under-classified a genuine data-protection event. This is the direct motivation for the semantic-gating roadmap item in §7.</div>
+  <p>A second, narrower note: the deepfake vector (#02) was tagged <strong>T1608.005 (Stage Capabilities: Link Target)</strong>. The classification into Gate C is correct; the specific ATT&amp;CK sub-technique is debatable and is flagged for refinement (Impersonation techniques may map more precisely).</p>
+
+  <!-- ── 6. Live monitoring ── -->
+  <h2 class="breakbefore">6 · Platform Performance — Live Monitoring <small>(Evidence Layer C)</small></h2>
+  <p>Where §5 tests the engine against curated vectors, §6 tests it against the open, live news stream — the same loop the platform ran throughout the tournament window.</p>
+  <h3>6.1 The pipeline</h3>
+  <p>The <code>LiveThreatMonitor</code> polls Google News RSS across <strong>12 World Cup threat queries</strong> (scam, ticket fraud, phishing, deepfake, data breach, cyberattack, and more), applies the CNS gate hierarchy to every headline at keyword speed, and separates flagged threats from contextual intel. Consistent with the two-stage design, <strong>no LLM is invoked in this loop</strong> — the expensive model runs only when an analyst opens a specific item.</p>
+  <h3>6.2 Captured session — 21 July 2026 (UTC)</h3>
+  <div class="statgrid">
+    <div class="stat"><div class="n">909</div><div class="l">headlines ingested &amp; assessed</div></div>
+    <div class="stat"><div class="n">222</div><div class="l">flagged as threats</div></div>
+    <div class="stat"><div class="n">12</div><div class="l">parallel threat queries</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">fetch / parse errors</div></div>
+  </div>
+  <p>Within the platform's rolling display window (the 60 most-recent flagged threats), the domain distribution was <span class="badge gA">A</span> fraud <strong>27</strong> · <span class="badge gB">B</span> compliance/breach <strong>28</strong> · <span class="badge gC">C</span> synthetic media <strong>5</strong>, at severities High 27 / Medium 28 / Critical 5.</p>
+  <h3>6.3 Independent corroboration</h3>
+  <p>The value of the live layer is that its flagged headlines <strong>independently reproduce the vendor intelligence in §2</strong>, from an entirely separate data source:</p>
+  <ul>
+    <li><span class="chip c-crit">CRITICAL</span> <span class="badge gC">C</span> <em>"World Cup 2026 Under Attack: A Wave of Deepfake Fraud Floods the Internet"</em>; <em>"World Cup 2026 AI Deepfakes Are Everywhere"</em>; a debunked viral fake photo — the same deepfake surge FortiGuard flagged.</li>
+    <li><span class="chip c-med">MEDIUM</span> <span class="badge gB">B</span> <em>"Iran-linked hackers claim breach … threaten World Cup security"</em>; <em>"Hackers Breach Sensitive Government Network Used for World Cup"</em> — consistent with CISA AA26-097A.</li>
+    <li><span class="chip c-high">HIGH</span> <span class="badge gA">A</span> ticket- and prize-fraud stories routed to the Anti-Scammer Goalie.</li>
+  </ul>
+  <div class="callout key"><span class="tag">Why this matters</span>Two independent pipelines — curated vectors (§5) and open news (§6) — converged on the same threat picture the industry reported. That convergence is the credibility of the result.</div>
+  <h3>6.4 From volatile to durable (engineering change, this release)</h3>
+  <p>The monitor originally held its assessments only in memory — a rolling window plus counters that reset whenever the process restarted or the free-tier host slept. <strong>No cumulative tournament-long total was ever persisted, and this paper therefore makes no such claim.</strong> As part of this work, an <strong>append-only JSONL persistence layer</strong> was added at the ingest choke point: every World-Cup-relevant headline the monitor classifies is now written to a durable archive, exposed through a new <code>GET /threats/history</code> endpoint. Going forward, the platform accumulates a permanent, queryable record of what it assessed. (On the current free-tier host the archive still needs to be pointed at durable storage — see §7.)</p>
+
+  <!-- ── 7. Takeaways ── -->
+  <h2 class="breakbefore">7 · Strategic Takeaways &amp; Recommendations</h2>
+  <h3>7.1 For fans and the public</h3>
+  <ol>
+    <li><strong>Buy and resell only through official FIFA channels.</strong> The most sophisticated fraud cloned the real SSO flow — the tell was the domain, not the page.</li>
+    <li><strong>Treat urgency as the attack.</strong> "Act now or lose the ticket" pressure is the scam mechanic, independent of the offer.</li>
+    <li><strong>Verify shocking clips before sharing.</strong> The deepfake wave was designed to be amplified; confirm on verified official accounts first.</li>
+    <li><strong>Isolate tournament accounts</strong> with unique passwords and 2FA; one reused credential unlocked the rest.</li>
+  </ol>
+  <h3>7.2 For organizers and host-event security</h3>
+  <ol>
+    <li><strong>Fund the fan-facing layer.</strong> The volume was in ticketing, streaming, and social reaction, not the stadium LAN.</li>
+    <li><strong>Pre-register and monitor brand infrastructure</strong> — SSL-certificate and tracking-ID pivots are effective takedown accelerators when done proactively.</li>
+    <li><strong>Multi-domain, human-in-the-loop triage</strong> matches how these threats actually blend (scam + deepfake + traffic in one campaign).</li>
+  </ol>
+  <h3>7.3 CyberShield engineering roadmap (evidence-driven)</h3>
+  <ol>
+    <li><strong>Semantic gating for the compliance domain</strong> — augment breach-keyword matching with lightweight embeddings so <em>proactive</em> PII collection (the §5.3 miss) is caught, without giving up the cheap-first-pass cost profile.</li>
+    <li><strong>MITRE mapping refinement</strong> — expand the technique map (e.g. Impersonation for synthetic media) beyond the current core set.</li>
+    <li><strong>Durable archive storage</strong> — point the new persistence layer at a persistent disk or external store (Neon Postgres / object storage) so the record survives host restarts.</li>
+    <li><strong>Spanish-language intake</strong> — the analysis layer is already language-native; broadening <em>ingestion</em> to Spanish-language outlets would surface regional threats first rather than translated and late.</li>
+  </ol>
+  <h3>7.4 Forward look: the events after 2026</h3>
+  <p>The 2026 tournament previews the attack surface facing every large-scale global event that follows — continental championships, the Olympic cycle, and the next World Cups. The through-line is constant: <strong>adversaries industrialize fan-facing fraud months in advance, blend fraud with disinformation and infrastructure abuse, and target the least-protected users.</strong> Cost-aware, multi-domain, accessible triage aimed squarely at that population is the defensible response.</p>
+
+  <!-- ── 8. Conclusion ── -->
+  <h2>8 · Conclusion</h2>
+  <p>The physical 2026 World Cup was secured; the digital one was contested at scale. Published intelligence establishes the shape of the threat — industrial malicious infrastructure, professional fraud operations, an AI-disinformation wave, and state-nexus activity at the edges. Against that documented set, CyberShield AI demonstrated, on the record, that a lightweight multi-agent engine can classify each vector into the correct domain, resolve conflicts in favor of the more dangerous interpretation, escalate ambiguity to humans, and do so at effectively zero inference cost — while independently corroborating the industry's own findings from a separate live data stream.</p>
+  <p>CyberShield is offered here as what it is: a rigorously exercised architectural proof-of-concept from PC Digital Solutions, with its capabilities and its limitations both on the table. That honesty is the point. The tools that will protect ordinary people at the next global event will be judged on reproducible results, not on claims — and reproducible results are what this paper puts forward.</p>
+
+  <!-- ── Appendices ── -->
+  <h2 class="breakbefore">Appendix A — Directed-triage artifacts</h2>
+  <p>Full Unified Threat Reports for all ten signals are retained as JSON (<code>wc2026_cns_results.json</code>). Representative record — Report <code>CS-IV-9D05BD23</code> (signal #02, the arbiter demonstration):</p>
+  <pre><code>{
+  "report_id": "CS-IV-9D05BD23",
+  "severity": "Critical",
+  "triggered_gates": ["Gate A", "Gate C"],
+  "primary_gate": "Gate C",
+  "primary_agent": "Red Card Sentinel",
+  "escalation_required": true,
+  "mitre_attack_id": "T1608.005",
+  "agent_outputs": {
+    "Gate A": { "agent": "Anti-Scammer Goalie", "status": "THREAT DETECTED", "severity": "High" },
+    "Gate C": { "agent": "Red Card Sentinel", "status": "RED CARD", "severity": "Critical" }
+  },
+  "recommended_actions": [
+    "Quarantine suspicious media",
+    "Request authenticity verification",
+    "Escalate to human analyst",
+    "Escalate multi-gate threat to Unified Threat Report",
+    "Require Human-in-the-Loop review"
+  ]
+}</code></pre>
+  <h2>Appendix B — Live-monitor capture</h2>
+  <p>Session snapshot and per-headline classifications are retained as JSON (<code>wc2026_live_monitor_results.json</code>), captured 21 July 2026 UTC: 909 headlines assessed, 222 flagged, 0 errors, across 12 parallel World Cup threat queries.</p>
+
+  <!-- ── Acknowledgments ── -->
+  <h2>Acknowledgments</h2>
+  <p>CyberShield AI is developed by PC Digital Solutions in partnership with the <strong>Raíces Cyber Organization</strong> (501(c)(3)) and <strong>Latinxs for Cybersecurity</strong>. Its community intelligence is made possible by the beta-tester cohort who contributed consented, anonymized scam reports — the defenders on the wall who make each analysis stronger for the next person.</p>
+
+  <!-- ── References ── -->
+  <h2>References</h2>
+  <ol class="refs">
+    <li>Group-IB — <em>The GHOST STADIUM Score: Billions At Stake At The World's Largest Football Tournament.</em> <a href="https://www.group-ib.com/blog/ghost-stadium-football-fraud/">group-ib.com/blog/ghost-stadium-football-fraud</a></li>
+    <li>FBI Internet Crime Complaint Center (IC3) — <em>Threat Actors Spoofing FIFA Websites in Advance of the 2026 World Cup,</em> PSA260527, 27 May 2026. <a href="https://www.ic3.gov/PSA/2026/PSA260527">ic3.gov/PSA/2026/PSA260527</a></li>
+    <li>Check Point (via Help Net Security) — <em>A single typo could derail your World Cup plans,</em> 28 May 2026. <a href="https://www.helpnetsecurity.com/2026/05/28/2026-fifa-world-cup-scams/">helpnetsecurity.com</a></li>
+    <li>Recorded Future / The Record — <em>Chinese-speaking fraud gang could be stealing millions from 2026 World Cup fans.</em> <a href="https://therecord.media/chinese-speaking-fraud-gang-fifa-world-cup-scam">therecord.media</a></li>
+    <li>Palo Alto Networks Unit 42 — <em>2026 World Cup: Discussing The World's Biggest Game's Attack Surface.</em> <a href="https://unit42.paloaltonetworks.com/fifa-world-cup-attack-surface/">unit42.paloaltonetworks.com</a></li>
+    <li>FortiGuard Labs — <em>Cybercriminals Are Targeting the FIFA World Cup 2026.</em> <a href="https://www.fortinet.com/blog/threat-research/cybercriminals-are-targeting-the-fifa-world-cup-2026">fortinet.com</a></li>
+    <li>KnowBe4 — <em>Cybercriminals Are Targeting the FIFA World Cup 2026.</em> <a href="https://blog.knowbe4.com/fifa-world-cup-2026-phishing-campaigns">blog.knowbe4.com</a></li>
+    <li>Rescana — <em>2026 FIFA World Cup Digital Platforms Face Surge in Sophisticated Cyber Threats and Fraud.</em> <a href="https://www.rescana.com/post/2026-fifa-world-cup-digital-platforms-face-surge-in-sophisticated-cyber-threats-and-fraud">rescana.com</a></li>
+    <li>CISA — Joint advisory AA26-097A (Iranian-affiliated ICS/PLC targeting) and 2026 World Cup preparedness reporting.</li>
+  </ol>
+  <p><small>Third-party figures are attributed to their publishing organizations and were not independently re-collected by PC Digital Solutions. CyberShield AI results are reproducible from the retained JSON artifacts referenced in Appendices A and B.</small></p>
+
+  <div class="foot">© 2026 PC Digital Solutions · CyberShield AI — El Guardián · Strength. Vigilance. Intelligence.<br>
+  aacp@pcdigitalsolutions.tech · Version 1.0 · 21 July 2026 · TLP:CLEAR</div>
+
+</div>
+</body>
+</html>
