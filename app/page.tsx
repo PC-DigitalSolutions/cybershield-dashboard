@@ -340,8 +340,8 @@ function EagleMark({ size = 14, color = "#fff", glow = T.babyBlue }: { size?: nu
 function StatRow({ label, value, color }: { label: string; value: React.ReactNode; color: string }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-[10px]" style={{ color: T.silverDim }}>{label}</span>
-      <span className="text-[13px] font-bold font-mono" style={{ color, textShadow: `0 0 8px ${color}40` }}>{value}</span>
+      <span className="text-[13px]" style={{ color: T.silverDim }}>{label}</span>
+      <span className="text-[15px] font-bold font-mono" style={{ color, textShadow: `0 0 8px ${color}40` }}>{value}</span>
     </div>
   );
 }
@@ -369,9 +369,9 @@ function AttachButton({ onPick, disabled, color = T.babyBlue }: { onPick: (f: Fi
 function FileChip({ file, onClear, color = T.babyBlue }: { file: File; onClear: () => void; color?: string }) {
   const k = fileKind(file);
   return (
-    <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] self-start max-w-full"
+    <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[13px] self-start max-w-full"
       style={{ background: `${color}12`, border: `1px solid ${color}40`, color: T.silver }}>
-      <span className="text-[13px] flex-shrink-0">{fileKindIcon(k)}</span>
+      <span className="text-[15px] flex-shrink-0">{fileKindIcon(k)}</span>
       <span className="truncate" style={{ maxWidth: 180 }} title={file.name}>{file.name}</span>
       <span className="flex-shrink-0" style={{ color: T.silverDim }}>{(file.size / (1024 * 1024)).toFixed(1)}MB</span>
       <button type="button" onClick={onClear} aria-label="Remove attachment"
@@ -612,10 +612,10 @@ function GoalieZone({ active }: { active: boolean }) {
       {/* Goalie header */}
       <div className="flex items-center gap-2 flex-shrink-0 px-1">
         <span className="text-base">🥅</span>
-        <span className="text-[11px] font-black tracking-[0.2em]" style={{ color: "#fff" }}>ANTI-SCAMMER GOALIE</span>
-        <span className="text-[8px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+        <span className="text-[13px] font-black tracking-[0.2em]" style={{ color: "#fff" }}>ANTI-SCAMMER GOALIE</span>
+        <span className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
           style={{ background: `${T.babyBlue}15`, border: `1px solid ${T.babyBlue}50`, color: T.babyBlue }}>GATE A</span>
-        <span className="ml-auto text-[8px] tracking-[0.14em]" style={{ color: T.silverDim }}>
+        <span className="ml-auto text-[11px] tracking-[0.14em]" style={{ color: T.silverDim }}>
           {feed ? `🛡️ ${feed.total} COMMUNITY REPORTS · ${feed.this_week} THIS WEEK` : "CONNECTING…"}
         </span>
       </div>
@@ -623,8 +623,8 @@ function GoalieZone({ active }: { active: boolean }) {
       {/* Community mission — one clean, readable line */}
       <div className="flex-shrink-0 px-3.5 py-2 rounded-lg flex items-center gap-2.5"
         style={{ background: `${GOLD}0A`, border: `1px solid ${GOLD}30` }}>
-        <span className="text-[12px] flex-shrink-0">🤝</span>
-        <span className="text-[10px] leading-relaxed" style={{ color: T.silver }}>
+        <span className="text-[14px] flex-shrink-0">🤝</span>
+        <span className="text-[13px] leading-relaxed" style={{ color: T.silver }}>
           <span className="font-bold" style={{ color: GOLD }}>Community mission — </span>
           every story you share trains the Goalie and protects the next person.
           <span style={{ color: GOLD }}> Tu historia protege a la próxima familia. 💙</span>
@@ -639,10 +639,10 @@ function GoalieZone({ active }: { active: boolean }) {
           {turns.map((t, i) =>
             t.role === "user" ? (
               <div key={i} className="flex justify-end">
-                <div className="max-w-[82%] px-3.5 py-2.5 rounded-2xl rounded-br-md text-[13px] leading-relaxed break-words"
+                <div className="max-w-[82%] px-3.5 py-2.5 rounded-2xl rounded-br-md text-[15px] leading-relaxed break-words"
                   style={{ background: `${T.royalBlue}55`, border: `1px solid ${T.royalBlue}`, color: "#E3F2FD" }}>
                   {t.file && (
-                    <div className="flex items-center gap-1.5 mb-1 text-[10px] font-semibold" style={{ color: T.babyBlue }}>
+                    <div className="flex items-center gap-1.5 mb-1 text-[13px] font-semibold" style={{ color: T.babyBlue }}>
                       {t.file}
                     </div>
                   )}
@@ -654,10 +654,10 @@ function GoalieZone({ active }: { active: boolean }) {
                 <div className="max-w-[88%] px-3.5 py-2.5 rounded-2xl rounded-bl-md"
                   style={{ background: `${T.babyBlue}0D`, border: `1px solid ${T.babyBlue}35` }}>
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <span className="text-[10px]">🥅</span>
-                    <span className="text-[8px] font-bold tracking-[0.2em]" style={{ color: T.babyBlue }}>GOALIE</span>
+                    <span className="text-[13px]">🥅</span>
+                    <span className="text-[11px] font-bold tracking-[0.2em]" style={{ color: T.babyBlue }}>GOALIE</span>
                     {(t.matches ?? 0) > 0 && (
-                      <span className="text-[7px] font-bold tracking-wider px-1.5 py-0.5 rounded-full"
+                      <span className="text-[11px] font-bold tracking-wider px-1.5 py-0.5 rounded-full"
                         style={{ background: `${GOLD}18`, border: `1px solid ${GOLD}50`, color: GOLD }}>
                         🛡️ COMMUNITY INTEL ×{t.matches}
                       </span>
@@ -669,7 +669,7 @@ function GoalieZone({ active }: { active: boolean }) {
             )
           )}
           {sending && (
-            <div className="flex items-center gap-2 text-[10px]" style={{ color: T.silverDim }}>
+            <div className="flex items-center gap-2 text-[13px]" style={{ color: T.silverDim }}>
               <div className="w-3 h-3 border-2 border-t-transparent rounded-full animate-spin"
                 style={{ borderColor: T.babyBlue, borderTopColor: "transparent" }} />
               The Goalie is reading the play…
@@ -680,7 +680,7 @@ function GoalieZone({ active }: { active: boolean }) {
           {!sending && !showReport && turns.some(t => t.role === "user") && (
             <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="flex justify-center pt-1">
               <button onClick={openReport}
-                className="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.1em] px-3.5 py-2 rounded-full transition-transform hover:scale-[1.03]"
+                className="flex items-center gap-1.5 text-[13px] font-bold tracking-[0.1em] px-3.5 py-2 rounded-full transition-transform hover:scale-[1.03]"
                 style={{ background: `${GOLD}12`, border: `1px solid ${GOLD}45`, color: GOLD }}>
                 🛡️ Share this with the community wall →
               </button>
@@ -693,7 +693,7 @@ function GoalieZone({ active }: { active: boolean }) {
           {!atBottom && (
             <motion.button initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }}
               onClick={scrollToBottom}
-              className="absolute bottom-2 right-3 z-20 flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[9px] font-bold tracking-wider"
+              className="absolute bottom-2 right-3 z-20 flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[12px] font-bold tracking-wider"
               style={{ background: `${T.royalBlue}E6`, border: `1px solid ${T.babyBlue}70`, color: T.babyBlue, boxShadow: `0 0 12px ${T.babyBlue}40` }}>
               ↓ LATEST
             </motion.button>
@@ -708,7 +708,7 @@ function GoalieZone({ active }: { active: boolean }) {
             <div className="grid grid-cols-2 gap-2">
               {GOALIE_ASKS.map(c => (
                 <button key={c.label} onClick={() => send(c.q)} disabled={sending}
-                  className="text-[10px] font-semibold text-center px-2.5 py-2 rounded-lg leading-snug transition-transform hover:scale-[1.02] disabled:opacity-50"
+                  className="text-[13px] font-semibold text-center px-2.5 py-2 rounded-lg leading-snug transition-transform hover:scale-[1.02] disabled:opacity-50"
                   style={{ background: `${T.babyBlue}10`, border: `1px solid ${T.babyBlue}35`, color: T.babyBlue }}>
                   {c.label}
                 </button>
@@ -724,12 +724,12 @@ function GoalieZone({ active }: { active: boolean }) {
                 if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
               }}
               placeholder={attached ? "Add a note (optional) and send… / Añade una nota (opcional)…" : "Paste the suspicious message here… / Pega aquí el mensaje sospechoso…"}
-              className="flex-1 px-3.5 py-2.5 text-[12px] outline-none rounded-lg resize-none leading-relaxed cs-scroll"
+              className="flex-1 px-3.5 py-2.5 text-[14px] outline-none rounded-lg resize-none leading-relaxed cs-scroll"
               style={{ background: "#08121f", border: `1px solid ${T.babyBlue}45`, color: T.silver }}
             />
             <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
               onClick={() => send()} disabled={sending}
-              className="px-4 text-[10px] font-bold tracking-[0.16em] rounded-lg disabled:opacity-60 flex-shrink-0"
+              className="px-4 text-[13px] font-bold tracking-[0.16em] rounded-lg disabled:opacity-60 flex-shrink-0"
               style={{ background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#050d18" }}>
               SEND
             </motion.button>
@@ -743,9 +743,9 @@ function GoalieZone({ active }: { active: boolean }) {
         {showReport ? (
           <div className="p-3 flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold tracking-[0.16em]" style={{ color: GOLD }}>🛡️ ADD YOUR STORY TO THE COMMUNITY WALL</span>
+              <span className="text-[13px] font-bold tracking-[0.16em]" style={{ color: GOLD }}>🛡️ ADD YOUR STORY TO THE COMMUNITY WALL</span>
               <button onClick={() => { setShowReport(false); setSubmitState("idle"); setPrefilledFromChat(false); }}
-                className="ml-auto text-[9px] px-2 py-0.5 rounded hover:bg-white/5" style={{ color: T.silverDim }}>✕ CLOSE</button>
+                className="ml-auto text-[12px] px-2 py-0.5 rounded hover:bg-white/5" style={{ color: T.silverDim }}>✕ CLOSE</button>
             </div>
             {submitState === "done" ? (
               <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
@@ -753,34 +753,34 @@ function GoalieZone({ active }: { active: boolean }) {
                 style={{ background: `linear-gradient(135deg, ${GOLD}14, ${T.babyBlue}0E)`, border: `1px solid ${GOLD}55`, boxShadow: `0 0 24px ${GOLD}20` }}>
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.1 }}
                   className="text-xl mb-1">🧤</motion.div>
-                <div className="text-[10px] font-black tracking-[0.24em] mb-2" style={{ color: GOLD }}>
+                <div className="text-[13px] font-black tracking-[0.24em] mb-2" style={{ color: GOLD }}>
                   THE GOALIE&apos;S PROMISE
                 </div>
                 <div className="space-y-1 mb-2">
                   {GOALIE_MANIFESTO.map((line, i) => (
                     <motion.div key={i} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.25 + i * 0.35 }}
-                      className="text-[10px] leading-relaxed" style={{ color: "#E3F2FD" }}>
+                      className="text-[13px] leading-relaxed" style={{ color: "#E3F2FD" }}>
                       {line}
                     </motion.div>
                   ))}
                 </div>
                 {contributorNum && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
-                    className="text-[9px] font-bold tracking-[0.18em] mb-1.5" style={{ color: T.babyBlue }}>
+                    className="text-[12px] font-bold tracking-[0.18em] mb-1.5" style={{ color: T.babyBlue }}>
                     ⭐ DEFENDER #{contributorNum} ON THE COMMUNITY WALL ⭐
                   </motion.div>
                 )}
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.1 }}
-                  className="text-[9.5px] font-bold" style={{ color: GOLD }}>
+                  className="text-[12px] font-bold" style={{ color: GOLD }}>
                   Gracias. De verdad — mil gracias. 💙 You make the shield stronger.
                 </motion.div>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }}
-                  className="text-[8px] tracking-wider mt-1.5" style={{ color: T.silverDim }}>
+                  className="text-[11px] tracking-wider mt-1.5" style={{ color: T.silverDim }}>
                   — THE ANTI-SCAMMER GOALIE · WITH RAÍCES CYBER &amp; OUR BETA TESTERS
                 </motion.div>
                 <button onClick={() => { setShowReport(false); setSubmitState("idle"); }}
-                  className="mt-2 px-3 py-1 text-[9px] font-bold tracking-[0.14em] rounded-md transition-transform hover:scale-[1.03]"
+                  className="mt-2 px-3 py-1 text-[12px] font-bold tracking-[0.14em] rounded-md transition-transform hover:scale-[1.03]"
                   style={{ background: `${T.babyBlue}15`, border: `1px solid ${T.babyBlue}50`, color: T.babyBlue }}>
                   BACK TO THE WALL
                 </button>
@@ -788,7 +788,7 @@ function GoalieZone({ active }: { active: boolean }) {
             ) : (
               <>
                 {prefilledFromChat && (
-                  <div className="flex items-center gap-1.5 text-[9.5px] leading-relaxed" style={{ color: T.babyBlue }}>
+                  <div className="flex items-center gap-1.5 text-[12px] leading-relaxed" style={{ color: T.babyBlue }}>
                     <span>💬</span>
                     <span>Pulled from your chat — edit it however you like before sharing.</span>
                   </div>
@@ -796,29 +796,29 @@ function GoalieZone({ active }: { active: boolean }) {
                 <textarea value={storyText} rows={4}
                   onChange={e => setStoryText(e.target.value)}
                   placeholder="What happened? No names needed — emails and phone numbers are scrubbed automatically. / ¿Qué pasó? Sin nombres — correos y teléfonos se borran automáticamente."
-                  className="w-full px-3.5 py-2.5 text-[12px] outline-none rounded-lg resize-none leading-relaxed cs-scroll"
+                  className="w-full px-3.5 py-2.5 text-[14px] outline-none rounded-lg resize-none leading-relaxed cs-scroll"
                   style={{ background: "#08121f", border: `1px solid ${GOLD}45`, color: T.silver }} />
                 <div className="flex items-center gap-2 flex-wrap">
                   <select value={storyType} onChange={e => setStoryType(e.target.value)}
-                    className="px-2 py-1.5 text-[10px] rounded-md outline-none"
+                    className="px-2 py-1.5 text-[13px] rounded-md outline-none"
                     style={{ background: "#08121f", border: `1px solid ${T.royalBlue}80`, color: T.silver }}>
                     {(feed?.scam_types ?? Object.keys(SCAM_TYPE_META)).map(t => (
                       <option key={t} value={t}>{SCAM_TYPE_META[t]?.icon ?? "⚠️"} {SCAM_TYPE_META[t]?.label ?? t}</option>
                     ))}
                   </select>
-                  <label className="flex items-center gap-1.5 text-[9px] cursor-pointer" style={{ color: T.silver }}>
+                  <label className="flex items-center gap-1.5 text-[12px] cursor-pointer" style={{ color: T.silver }}>
                     <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} />
                     Share anonymously with the community
                   </label>
                   <button onClick={submitStory}
                     disabled={!consent || storyText.trim().length < 20 || submitState === "sending"}
-                    className="ml-auto px-3 py-1.5 text-[9px] font-bold tracking-[0.14em] rounded-md disabled:opacity-40"
+                    className="ml-auto px-3 py-1.5 text-[12px] font-bold tracking-[0.14em] rounded-md disabled:opacity-40"
                     style={{ background: `${GOLD}20`, border: `1px solid ${GOLD}60`, color: GOLD }}>
                     {submitState === "sending" ? "SAVING…" : "SUBMIT STORY"}
                   </button>
                 </div>
                 {submitState === "error" && (
-                  <div className="text-[9px]" style={{ color: "#FF8C42" }}>🧤 {submitError}</div>
+                  <div className="text-[12px]" style={{ color: "#FF8C42" }}>🧤 {submitError}</div>
                 )}
               </>
             )}
@@ -826,12 +826,12 @@ function GoalieZone({ active }: { active: boolean }) {
         ) : (
           <div className="p-3.5">
             <div className="flex items-center gap-2 mb-2.5">
-              <span className="text-[10px] font-bold tracking-[0.18em]" style={{ color: GOLD }}>🛡️ COMMUNITY SCAM WALL</span>
-              <span className="text-[9px] tracking-wide" style={{ color: T.silverDim }}>
+              <span className="text-[13px] font-bold tracking-[0.18em]" style={{ color: GOLD }}>🛡️ COMMUNITY SCAM WALL</span>
+              <span className="text-[12px] tracking-wide" style={{ color: T.silverDim }}>
                 {feed ? `${feed.total} reports` : ""}
               </span>
               <button onClick={openReport}
-                className="ml-auto px-3 py-1.5 text-[9px] font-bold tracking-[0.12em] rounded-md transition-transform hover:scale-[1.03]"
+                className="ml-auto px-3 py-1.5 text-[12px] font-bold tracking-[0.12em] rounded-md transition-transform hover:scale-[1.03]"
                 style={{ background: `${GOLD}18`, border: `1px solid ${GOLD}55`, color: GOLD }}>
                 ➕ ADD MY STORY
               </button>
@@ -841,11 +841,11 @@ function GoalieZone({ active }: { active: boolean }) {
                 <div key={s.id} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg"
                   style={{ background: `${T.royalBlue}14`, border: `1px solid ${T.royalBlue}35` }}>
                   <span className="text-[14px] flex-shrink-0 mt-px">{SCAM_TYPE_META[s.scam_type]?.icon ?? "⚠️"}</span>
-                  <span className="text-[11.5px] leading-relaxed break-words flex-1" style={{ color: T.silver }}>{s.story}</span>
-                  <span className="text-[8px] flex-shrink-0 mt-1 tracking-wide" style={{ color: T.silverDim }}>{timeAgo(s.created)}</span>
+                  <span className="text-[13px] leading-relaxed break-words flex-1" style={{ color: T.silver }}>{s.story}</span>
+                  <span className="text-[11px] flex-shrink-0 mt-1 tracking-wide" style={{ color: T.silverDim }}>{timeAgo(s.created)}</span>
                 </div>
               )) : (
-                <div className="text-[11px]" style={{ color: T.silverDim }}>Loading community reports…</div>
+                <div className="text-[13px]" style={{ color: T.silverDim }}>Loading community reports…</div>
               )}
             </div>
           </div>
@@ -862,7 +862,7 @@ function MissionTile({ label, value, color }: { label: string; value: React.Reac
     <div className="flex flex-col gap-1 px-3 py-2.5 rounded"
       style={{ background: `${color}0E`, border: `1px solid ${color}33` }}>
       <span className="text-[18px] font-bold font-mono leading-none" style={{ color, textShadow: `0 0 10px ${color}55` }}>{value}</span>
-      <span className="text-[8px] tracking-[0.14em] uppercase" style={{ color: T.silverDim }}>{label}</span>
+      <span className="text-[11px] tracking-[0.14em] uppercase" style={{ color: T.silverDim }}>{label}</span>
     </div>
   );
 }
@@ -880,12 +880,12 @@ function MissionCard({ m }: { m: Mission }) {
       <div className="flex items-center gap-2 px-3.5 py-2.5 flex-wrap"
         style={{ borderBottom: `1px solid ${T.royalBlue}44` }}>
         <span className="text-xs">🏆</span>
-        <span className="text-[12px] font-bold tracking-wide" style={{ color: "#fff" }}>{m.name}</span>
-        <span className="text-[9px] font-bold tracking-widest px-2 py-0.5 rounded-full"
+        <span className="text-[14px] font-bold tracking-wide" style={{ color: "#fff" }}>{m.name}</span>
+        <span className="text-[12px] font-bold tracking-widest px-2 py-0.5 rounded-full"
           style={{ background: `${T.neonGreen}18`, border: `1px solid ${T.neonGreen}55`, color: T.neonGreen }}>
           ✓ COMPLETED MISSION
         </span>
-        <span className="ml-auto text-[9px] tracking-wider" style={{ color: T.silverDim }}>{m.window}</span>
+        <span className="ml-auto text-[12px] tracking-wider" style={{ color: T.silverDim }}>{m.window}</span>
       </div>
 
       <div className="p-3.5 flex flex-col gap-3.5">
@@ -904,17 +904,17 @@ function MissionCard({ m }: { m: Mission }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           {/* Scam types */}
           <div className="flex flex-col gap-1.5">
-            <div className="text-[9px] tracking-[0.16em] uppercase mb-0.5" style={{ color: T.silverDim }}>Threats reported by community</div>
+            <div className="text-[12px] tracking-[0.16em] uppercase mb-0.5" style={{ color: T.silverDim }}>Threats reported by community</div>
             {scam.map(([type, n]) => {
               const meta = SCAM_TYPE_META[type] ?? SCAM_TYPE_META.other;
               return (
                 <div key={type} className="flex items-center gap-2">
-                  <span className="text-[11px] w-4 text-center">{meta.icon}</span>
-                  <span className="text-[10px] flex-shrink-0 w-24 truncate" style={{ color: T.silver }}>{meta.label}</span>
+                  <span className="text-[13px] w-4 text-center">{meta.icon}</span>
+                  <span className="text-[13px] flex-shrink-0 w-24 truncate" style={{ color: T.silver }}>{meta.label}</span>
                   <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: `${T.royalBlue}40` }}>
                     <div className="h-full rounded-full" style={{ width: `${(n / scamMax) * 100}%`, background: T.babyBlue, boxShadow: `0 0 6px ${T.babyBlue}` }} />
                   </div>
-                  <span className="text-[10px] font-mono w-4 text-right" style={{ color: T.silverDim }}>{n}</span>
+                  <span className="text-[13px] font-mono w-4 text-right" style={{ color: T.silverDim }}>{n}</span>
                 </div>
               );
             })}
@@ -923,14 +923,14 @@ function MissionCard({ m }: { m: Mission }) {
           {/* Activity + languages */}
           <div className="flex flex-col gap-2.5">
             <div>
-              <div className="text-[9px] tracking-[0.16em] uppercase mb-1.5" style={{ color: T.silverDim }}>Activity over the tournament</div>
-              {activity.length > 0 ? <BarChart values={activity} /> : <div className="text-[10px]" style={{ color: T.silverDim }}>No activity recorded.</div>}
+              <div className="text-[12px] tracking-[0.16em] uppercase mb-1.5" style={{ color: T.silverDim }}>Activity over the tournament</div>
+              {activity.length > 0 ? <BarChart values={activity} /> : <div className="text-[13px]" style={{ color: T.silverDim }}>No activity recorded.</div>}
             </div>
             <div>
-              <div className="text-[9px] tracking-[0.16em] uppercase mb-1.5" style={{ color: T.silverDim }}>Languages served</div>
+              <div className="text-[12px] tracking-[0.16em] uppercase mb-1.5" style={{ color: T.silverDim }}>Languages served</div>
               <div className="flex flex-wrap gap-1.5">
                 {Object.entries(m.languages).map(([lang, n]) => (
-                  <span key={lang} className="text-[9px] tracking-wide px-2 py-0.5 rounded-full"
+                  <span key={lang} className="text-[12px] tracking-wide px-2 py-0.5 rounded-full"
                     style={{ background: `${GOLD}12`, border: `1px solid ${GOLD}40`, color: T.silver }}>
                     {LANG_LABEL[lang] ?? lang} · {n}
                   </span>
@@ -940,7 +940,7 @@ function MissionCard({ m }: { m: Mission }) {
           </div>
         </div>
 
-        <div className="text-[8px] tracking-wider text-right" style={{ color: T.silverDim }}>
+        <div className="text-[11px] tracking-wider text-right" style={{ color: T.silverDim }}>
           Archived {archived} · verifiable local evidence set
         </div>
       </div>
@@ -968,8 +968,8 @@ function CompletedMissions({ open, onClose }: { open: boolean; onClose: () => vo
             {/* Header */}
             <div className="flex items-center gap-2.5 px-4 py-3" style={{ borderBottom: `1px solid ${T.panelBorder}`, background: `linear-gradient(90deg, ${T.royalBlue}30, transparent)` }}>
               <Crosshair className="w-4 h-4" style={{ color: T.babyBlue }} />
-              <span className="text-[12px] font-bold tracking-[0.22em]" style={{ color: "#fff" }}>COMPLETED MISSIONS</span>
-              <span className="text-[9px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+              <span className="text-[14px] font-bold tracking-[0.22em]" style={{ color: "#fff" }}>COMPLETED MISSIONS</span>
+              <span className="text-[12px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
                 style={{ background: `${T.babyBlue}18`, border: `1px solid ${T.babyBlue}45`, color: T.babyBlue }}>{MISSIONS.length}</span>
               <button onClick={onClose} aria-label="Close"
                 className="ml-auto w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 transition-colors"
@@ -978,7 +978,7 @@ function CompletedMissions({ open, onClose }: { open: boolean; onClose: () => vo
 
             {/* Body */}
             <div className="p-4 flex flex-col gap-3 max-h-[80vh] overflow-y-auto">
-              <p className="text-[10px] leading-relaxed" style={{ color: T.silverDim }}>
+              <p className="text-[13px] leading-relaxed" style={{ color: T.silverDim }}>
                 Archived after-action records from CyberShield deployments. Every figure below is real,
                 anonymized mission data — no personal information leaves the vault.
               </p>
@@ -1151,14 +1151,14 @@ export default function CyberShieldCommandCenter() {
           <BrandLogo />
           <div>
             <div className="font-bold text-xs tracking-widest" style={{ color: T.babyBlue }}>PC Digital Solutions</div>
-            <div className="text-[9px] tracking-wider" style={{ color: T.silverDim }}>Cyber Defense Systems</div>
+            <div className="text-[12px] tracking-wider" style={{ color: T.silverDim }}>Cyber Defense Systems</div>
           </div>
         </div>
         <div className="flex items-center gap-2 px-3 py-1 rounded-full"
           style={{ background: `${T.royalBlue}25`, border: `1px solid ${T.royalBlue}80` }}>
           <span className="text-xs inline-block">⚽</span>
-          <span className="text-[10px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>FIFA WORLD CUP 2026</span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold tracking-widest"
+          <span className="text-[13px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>FIFA WORLD CUP 2026</span>
+          <span className="text-[12px] px-1.5 py-0.5 rounded-full font-bold tracking-widest"
             style={{ background: `${GOLD}20`, border: `1px solid ${GOLD}60`, color: GOLD }}>CONCLUDED</span>
         </div>
         <div className="flex items-center gap-2 text-xs">
@@ -1186,11 +1186,11 @@ export default function CyberShieldCommandCenter() {
               <span className="text-lg flex-shrink-0" style={{ filter: `drop-shadow(0 0 6px ${GOLD}88)` }}>🏆</span>
               <div className="flex flex-col min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[12px] font-black tracking-[0.18em]" style={{ color: "#fff", textShadow: `0 0 12px ${GOLD}66` }}>MISSION 1 COMPLETE</span>
-                  <span className="text-[8px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                  <span className="text-[14px] font-black tracking-[0.18em]" style={{ color: "#fff", textShadow: `0 0 12px ${GOLD}66` }}>MISSION 1 COMPLETE</span>
+                  <span className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
                     style={{ background: `${T.neonGreen}22`, border: `1px solid ${T.neonGreen}66`, color: T.neonGreen }}>WORLD CUP 2026</span>
                 </div>
-                <span className="text-[9px] tracking-wide mt-0.5 truncate" style={{ color: T.silver }}>
+                <span className="text-[12px] tracking-wide mt-0.5 truncate" style={{ color: T.silver }}>
                   {mh.threats_assessed != null && <><span style={{ color: GOLD }}>{mh.threats_assessed.toLocaleString()}</span> threats assessed · </>}
                   {mh.goalie_chat_turns} chats handled · {+(mh.community_intel_hit_rate * 100).toFixed(1)}% community-intel hit rate
                 </span>
@@ -1198,17 +1198,17 @@ export default function CyberShieldCommandCenter() {
             </div>
             {/* next-mission road — interim proving run → flagship */}
             <div className="hidden md:flex items-center gap-2 px-4 flex-shrink-0" style={{ borderLeft: `1px solid ${GOLD}33` }}>
-              <span className="text-[8px] tracking-[0.16em] uppercase" style={{ color: T.silver }}>Next up</span>
-              <span className="text-[10px] font-bold tracking-wide whitespace-nowrap" style={{ color: T.babyBlue }}>🏈 Super Bowl LXI</span>
-              <span className="text-[9px]" style={{ color: T.silver }}>→</span>
-              <span className="text-[10px] font-bold tracking-wide whitespace-nowrap" style={{ color: GOLD, textShadow: `0 0 10px ${GOLD}66` }}>🥇 LA 2028</span>
+              <span className="text-[11px] tracking-[0.16em] uppercase" style={{ color: T.silver }}>Next up</span>
+              <span className="text-[13px] font-bold tracking-wide whitespace-nowrap" style={{ color: T.babyBlue }}>🏈 Super Bowl LXI</span>
+              <span className="text-[12px]" style={{ color: T.silver }}>→</span>
+              <span className="text-[13px] font-bold tracking-wide whitespace-nowrap" style={{ color: GOLD, textShadow: `0 0 10px ${GOLD}66` }}>🥇 LA 2028</span>
             </div>
             {/* CTA → after-action archive */}
             <button onClick={() => setShowMissions(true)}
               className="flex items-center justify-center gap-2 px-5 py-2.5 flex-shrink-0 transition-all hover:brightness-110"
               style={{ background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#04101f", boxShadow: `0 0 18px ${T.babyBlue}55` }}>
               <Crosshair className="w-3.5 h-3.5" />
-              <span className="text-[10px] font-black tracking-[0.16em] whitespace-nowrap">AFTER-ACTION REPORT</span>
+              <span className="text-[13px] font-black tracking-[0.16em] whitespace-nowrap">AFTER-ACTION REPORT</span>
             </button>
           </div>
         </div>
@@ -1222,7 +1222,7 @@ export default function CyberShieldCommandCenter() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/raices_logo.png" alt="Raíces Cyber Organization" style={{ height: 13 }} />
           </span>
-          <span className="text-[9px] font-bold tracking-[0.14em]" style={{ color: T.silver }}>
+          <span className="text-[12px] font-bold tracking-[0.14em]" style={{ color: T.silver }}>
             <span style={{ color: GOLD }}>THANK YOU</span> RAÍCES CYBER
             <span style={{ color: `${T.silverDim}` }}> &amp; </span>
             OUR BETA TESTERS <span style={{ color: GOLD }}>💙</span>
@@ -1248,8 +1248,8 @@ export default function CyberShieldCommandCenter() {
                 <span className="absolute left-0 top-0 bottom-0 w-[3px]"
                   style={{ background: T.babyBlue, boxShadow: `0 0 8px ${T.babyBlue}` }} />
                 <Home className="w-3.5 h-3.5" style={{ color: T.babyBlue }} />
-                <span className="text-[11px] font-bold tracking-[0.22em]" style={{ color: "#fff" }}>HOME BASE</span>
-                <span className="ml-auto text-[7px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                <span className="text-[13px] font-bold tracking-[0.22em]" style={{ color: "#fff" }}>HOME BASE</span>
+                <span className="ml-auto text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
                   style={{ background: `${T.neonGreen}18`, border: `1px solid ${T.neonGreen}45`, color: T.neonGreen }}>HQ</span>
               </button>
               {/* Mission Selector — secondary targeting style */}
@@ -1257,7 +1257,7 @@ export default function CyberShieldCommandCenter() {
                 className="w-full flex items-center gap-2.5 px-3 py-2 rounded-sm transition-colors hover:bg-white/5"
                 style={{ border: `1px dashed ${T.royalLight}66` }}>
                 <Crosshair className="w-3.5 h-3.5" style={{ color: T.royalLight }} />
-                <span className="text-[11px] tracking-[0.22em]" style={{ color: T.silver }}>MISSION SELECTOR</span>
+                <span className="text-[13px] tracking-[0.22em]" style={{ color: T.silver }}>MISSION SELECTOR</span>
                 <ChevronRight className="ml-auto w-3 h-3" style={{ color: T.silverDim }} />
               </motion.button>
             </div>
@@ -1294,13 +1294,13 @@ export default function CyberShieldCommandCenter() {
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-semibold truncate" style={{ color: T.silver }}>{agent.name}</div>
                       {isEngaged ? (
-                        <motion.div className="text-[9px] tracking-widest mt-0.5 font-bold flex items-center gap-1"
+                        <motion.div className="text-[12px] tracking-widest mt-0.5 font-bold flex items-center gap-1"
                           style={{ color: agent.color }}
                           animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1, repeat: Infinity }}>
                           ⚡ ENGAGED · {agent.gate}
                         </motion.div>
                       ) : (
-                        <div className="text-[9px] tracking-widest mt-0.5" style={{ color: agent.color }}>● ACTIVE · {agent.gate}</div>
+                        <div className="text-[12px] tracking-widest mt-0.5" style={{ color: agent.color }}>● ACTIVE · {agent.gate}</div>
                       )}
                       {/* live threat-load bar */}
                       <div className="mt-1.5 flex items-center gap-1.5">
@@ -1310,7 +1310,7 @@ export default function CyberShieldCommandCenter() {
                             transition={{ duration: 0.6, ease: "easeOut" }}
                             style={{ background: agent.color, boxShadow: `0 0 6px ${agent.color}` }} />
                         </div>
-                        <span className="text-[7px] font-mono flex-shrink-0 w-6 text-right" style={{ color: T.silverDim }}>
+                        <span className="text-[11px] font-mono flex-shrink-0 w-6 text-right" style={{ color: T.silverDim }}>
                           {loadedThreatTotal ? Math.round((liveCount / loadedThreatTotal) * 100) : 0}%
                         </span>
                       </div>
@@ -1318,8 +1318,8 @@ export default function CyberShieldCommandCenter() {
                     {liveCount > 0 ? (
                       <span className="flex-shrink-0 flex flex-col items-center justify-center px-1.5 py-0.5 rounded-md"
                         style={{ background: `${agent.color}1A`, border: `1px solid ${agent.color}50` }}>
-                        <span className="text-[12px] font-black font-mono leading-none" style={{ color: agent.color }}>{liveCount}</span>
-                        <span className="text-[6px] tracking-wider mt-0.5" style={{ color: T.silverDim }}>LIVE</span>
+                        <span className="text-[14px] font-black font-mono leading-none" style={{ color: agent.color }}>{liveCount}</span>
+                        <span className="text-[10px] tracking-wider mt-0.5" style={{ color: T.silverDim }}>LIVE</span>
                       </span>
                     ) : (
                       <ChevronRight className="w-3 h-3 flex-shrink-0" style={{ color: T.silverDim }} />
@@ -1336,13 +1336,13 @@ export default function CyberShieldCommandCenter() {
             <div className="p-3 flex flex-col h-full">
               <div className="flex items-center gap-2 mb-3 flex-shrink-0">
                 <EagleMark size={15} />
-                <span className="text-[10px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>DEFENSE STATUS</span>
+                <span className="text-[13px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>DEFENSE STATUS</span>
               </div>
               <div className="flex items-center gap-2 mb-3 px-2 py-1.5 rounded-sm flex-shrink-0"
                 style={{ background: `${T.neonGreen}12`, border: `1px solid ${T.neonGreen}33` }}>
                 <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                   style={{ background: T.neonGreen, boxShadow: `0 0 6px ${T.neonGreen}` }} />
-                <span className="text-[10px] font-bold tracking-wider" style={{ color: T.neonGreen }}>EL GUARDIÁN · ON DUTY</span>
+                <span className="text-[13px] font-bold tracking-wider" style={{ color: T.neonGreen }}>EL GUARDIÁN · ON DUTY</span>
               </div>
               <div className="space-y-2.5 flex-1">
                 <StatRow label="Signals Analyzed" value={analyzedCount} color={T.babyBlue} />
@@ -1351,7 +1351,7 @@ export default function CyberShieldCommandCenter() {
                 <StatRow label="Gates Online"     value="4 / 4"          color={T.royalLight} />
                 <StatRow label="Shield Integrity" value="100%"           color={T.babyBlue} />
               </div>
-              <div className="text-[8px] tracking-[0.18em] text-center pt-2 flex-shrink-0" style={{ color: T.silverDim }}>
+              <div className="text-[11px] tracking-[0.18em] text-center pt-2 flex-shrink-0" style={{ color: T.silverDim }}>
                 PC DIGITAL SOLUTIONS · CNS PHASE III
               </div>
             </div>
@@ -1379,14 +1379,14 @@ export default function CyberShieldCommandCenter() {
                 const markColor = active ? "#04101f" : T.silverDim;
                 return (
                   <button key={key} onClick={() => setCenterTab(key)}
-                    className="py-1.5 rounded-md text-[10px] font-bold tracking-[0.16em] transition-all flex items-center justify-center gap-1.5"
+                    className="py-1.5 rounded-md text-[13px] font-bold tracking-[0.16em] transition-all flex items-center justify-center gap-1.5"
                     style={active
                       ? { background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#04101f", boxShadow: `0 0 14px ${T.babyBlue}45` }
                       : { color: T.silverDim }}>
                     <EagleMark size={13} color={markColor} glow={active ? "#04101f" : T.babyBlue} />
                     {label}
                     {key === "goalie" && !active && (
-                      <span className="ml-0.5 text-[7px] font-bold px-1 py-0.5 rounded-full"
+                      <span className="ml-0.5 text-[11px] font-bold px-1 py-0.5 rounded-full"
                         style={{ background: `${GOLD}20`, color: GOLD }}>BETA</span>
                     )}
                   </button>
@@ -1406,8 +1406,8 @@ export default function CyberShieldCommandCenter() {
                   CYBERSHIELD <span style={{ color: T.babyBlue }}>AI</span>
                 </h1>
                 <div className="flex items-center gap-2 mt-1.5">
-                  <p className="text-[9px] tracking-[0.24em] font-bold" style={{ color: T.babyBlue }}>EL GUARDIÁN · WORLD CUP 2026 DEFENSE</p>
-                  <span className="flex items-center gap-1.5 text-[8px] font-bold tracking-widest px-2 py-0.5 rounded-full"
+                  <p className="text-[12px] tracking-[0.24em] font-bold" style={{ color: T.babyBlue }}>EL GUARDIÁN · WORLD CUP 2026 DEFENSE</p>
+                  <span className="flex items-center gap-1.5 text-[11px] font-bold tracking-widest px-2 py-0.5 rounded-full"
                     style={{ background: `${posture.color}15`, border: `1px solid ${posture.color}55`, color: posture.color }}>
                     <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: posture.color }} />
                     {posture.label}
@@ -1416,7 +1416,7 @@ export default function CyberShieldCommandCenter() {
               </div>
 
               {/* Primary action — the one clear thing to do on arrival */}
-              <p className="text-center text-[12px] leading-relaxed mb-3 px-4" style={{ color: T.silver }}>
+              <p className="text-center text-[14px] leading-relaxed mb-3 px-4" style={{ color: T.silver }}>
                 Paste anything that feels off — a link, a message, a too-good-to-be-true offer —
                 and El Guardián checks it in seconds.
                 <span style={{ color: T.silverDim }}> Not sure where to start? Tap an example.</span>
@@ -1426,7 +1426,7 @@ export default function CyberShieldCommandCenter() {
               <div className="grid grid-cols-2 gap-2 mb-4">
                 {QUICK_ASKS.map(c => (
                   <button key={c.label} onClick={() => runSignal(c.q)} disabled={loading}
-                    className="text-[10px] font-semibold text-center px-3 py-2 rounded-lg transition-transform hover:scale-[1.03] disabled:opacity-50"
+                    className="text-[13px] font-semibold text-center px-3 py-2 rounded-lg transition-transform hover:scale-[1.03] disabled:opacity-50"
                     style={{ background: `${T.babyBlue}12`, border: `1px solid ${T.babyBlue}40`, color: T.babyBlue }}>
                     {c.label}
                   </button>
@@ -1443,7 +1443,7 @@ export default function CyberShieldCommandCenter() {
                   <div key={s.label} className="rounded-lg px-3 py-2 text-center"
                     style={{ background: `${T.royalBlue}12`, border: `1px solid ${T.royalBlue}30` }}>
                     <div className="text-base font-black font-mono leading-none" style={{ color: s.color }}>{s.value}</div>
-                    <div className="text-[8px] tracking-[0.12em] mt-1" style={{ color: T.silverDim }}>{s.label}</div>
+                    <div className="text-[11px] tracking-[0.12em] mt-1" style={{ color: T.silverDim }}>{s.label}</div>
                   </div>
                 ))}
               </div>
@@ -1453,13 +1453,13 @@ export default function CyberShieldCommandCenter() {
                 <div className="p-3.5 flex flex-col">
                   <div className="flex items-center gap-2 mb-2 flex-shrink-0">
                     <EagleMark size={13} />
-                    <span className="text-[9px] tracking-[0.3em] font-bold" style={{ color: T.babyBlue }}>EL GUARDIÁN</span>
+                    <span className="text-[12px] tracking-[0.3em] font-bold" style={{ color: T.babyBlue }}>EL GUARDIÁN</span>
                   </div>
                   {query && (
                     <div className="mb-2 flex-shrink-0 flex items-start gap-2 px-2.5 py-1.5 rounded-md"
                       style={{ background: `${T.royalBlue}1A`, border: `1px solid ${T.royalBlue}40` }}>
-                      <span className="text-[8px] font-bold tracking-[0.2em] mt-0.5 flex-shrink-0" style={{ color: T.silverDim }}>YOU ▸</span>
-                      <span className="text-[10px] leading-snug break-words" style={{ color: T.silver }}>{query}</span>
+                      <span className="text-[11px] font-bold tracking-[0.2em] mt-0.5 flex-shrink-0" style={{ color: T.silverDim }}>YOU ▸</span>
+                      <span className="text-[13px] leading-snug break-words" style={{ color: T.silver }}>{query}</span>
                     </div>
                   )}
                   <div className="max-h-[320px] overflow-y-auto min-h-0 pr-1 cs-scroll">
@@ -1486,10 +1486,10 @@ export default function CyberShieldCommandCenter() {
                                 className="mt-4 pl-3" style={{ borderLeft: `2px solid ${a.color}` }}>
                                 <div className="flex items-center gap-2 mb-1.5">
                                   <EagleMark size={14} color={a.color} glow={a.color} />
-                                  <span className="text-[9px] tracking-[0.25em] font-bold" style={{ color: a.color }}>
+                                  <span className="text-[12px] tracking-[0.25em] font-bold" style={{ color: a.color }}>
                                     {r.agent.toUpperCase()} · {r.gate.toUpperCase()}
                                   </span>
-                                  <span className="text-[8px] px-1.5 py-0.5 rounded-sm font-bold tracking-widest"
+                                  <span className="text-[11px] px-1.5 py-0.5 rounded-sm font-bold tracking-widest"
                                     style={{ background: `${a.color}18`, border: `1px solid ${a.color}40`, color: a.color }}>
                                     REPORTING
                                   </span>
@@ -1539,7 +1539,7 @@ export default function CyberShieldCommandCenter() {
                 </div>
                 <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                   onClick={handleActivate} disabled={loading}
-                  className="flex items-center justify-center px-6 text-[11px] font-bold tracking-[0.18em] rounded-lg disabled:opacity-60 flex-shrink-0"
+                  className="flex items-center justify-center px-6 text-[13px] font-bold tracking-[0.18em] rounded-lg disabled:opacity-60 flex-shrink-0"
                   style={{ background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#050d18", boxShadow: `0 0 20px ${T.babyBlue}50` }}
                 >
                   ACTIVATE SHIELD
@@ -1562,13 +1562,13 @@ export default function CyberShieldCommandCenter() {
               const active = rightTab === key;
               return (
                 <button key={key} onClick={() => setRightTab(key)}
-                  className="py-2 rounded-md text-[10px] font-bold tracking-[0.16em] transition-all"
+                  className="py-2 rounded-md text-[13px] font-bold tracking-[0.16em] transition-all"
                   style={active
                     ? { background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#04101f", boxShadow: `0 0 14px ${T.babyBlue}45` }
                     : { color: T.silverDim }}>
                   {label.toUpperCase()}
                   {key === "news" && threatFeed && threatFeed.active_threats > 0 && (
-                    <span className="ml-1.5 inline-flex items-center justify-center text-[8px] font-bold px-1 rounded-full"
+                    <span className="ml-1.5 inline-flex items-center justify-center text-[11px] font-bold px-1 rounded-full"
                       style={{ background: active ? "#04101f30" : "#FF3B3B22", color: active ? "#04101f" : "#FF8C42" }}>
                       {threatFeed.active_threats}
                     </span>
@@ -1586,8 +1586,8 @@ export default function CyberShieldCommandCenter() {
               {rightTab === "standings" && (
                 <>
                   <div className="flex items-center justify-between mb-2.5 flex-shrink-0">
-                    <span className="text-[11px] font-bold tracking-[0.18em]" style={{ color: "#fff" }}>OUR PILLARS</span>
-                    <span className="text-[8px] tracking-[0.16em]" style={{ color: T.silverDim }}>PC DIGITAL SOLUTIONS</span>
+                    <span className="text-[13px] font-bold tracking-[0.18em]" style={{ color: "#fff" }}>OUR PILLARS</span>
+                    <span className="text-[11px] tracking-[0.16em]" style={{ color: T.silverDim }}>PC DIGITAL SOLUTIONS</span>
                   </div>
 
                   {/* three values, each with a live signal */}
@@ -1595,39 +1595,39 @@ export default function CyberShieldCommandCenter() {
                     <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg" style={{ background: `${GOLD}0E`, border: `1px solid ${GOLD}33` }}>
                       <span className="text-sm">💪</span>
                       <div className="flex flex-col min-w-0 flex-1">
-                        <span className="text-[10px] font-bold tracking-[0.14em]" style={{ color: GOLD }}>STRENGTH</span>
-                        <span className="text-[9px] leading-tight" style={{ color: T.silver }}>Defense that holds — one mission proven.</span>
+                        <span className="text-[13px] font-bold tracking-[0.14em]" style={{ color: GOLD }}>STRENGTH</span>
+                        <span className="text-[12px] leading-tight" style={{ color: T.silver }}>Defense that holds — one mission proven.</span>
                       </div>
-                      <span className="text-[11px] font-mono font-bold" style={{ color: GOLD }}>{mh?.threats_assessed?.toLocaleString() ?? "—"}</span>
+                      <span className="text-[13px] font-mono font-bold" style={{ color: GOLD }}>{mh?.threats_assessed?.toLocaleString() ?? "—"}</span>
                     </div>
                     <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg" style={{ background: `${T.neonGreen}0E`, border: `1px solid ${T.neonGreen}33` }}>
                       <span className="text-sm">🛡️</span>
                       <div className="flex flex-col min-w-0 flex-1">
-                        <span className="text-[10px] font-bold tracking-[0.14em]" style={{ color: T.neonGreen }}>VIGILANCE</span>
-                        <span className="text-[9px] leading-tight" style={{ color: T.silver }}>Always watching the wire, live.</span>
+                        <span className="text-[13px] font-bold tracking-[0.14em]" style={{ color: T.neonGreen }}>VIGILANCE</span>
+                        <span className="text-[12px] leading-tight" style={{ color: T.silver }}>Always watching the wire, live.</span>
                       </div>
-                      <span className="text-[11px] font-mono font-bold" style={{ color: T.neonGreen }}>{threatFeed?.total_seen ?? "—"}</span>
+                      <span className="text-[13px] font-mono font-bold" style={{ color: T.neonGreen }}>{threatFeed?.total_seen ?? "—"}</span>
                     </div>
                     <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg" style={{ background: `${T.babyBlue}0E`, border: `1px solid ${T.babyBlue}33` }}>
                       <span className="text-sm">🧠</span>
                       <div className="flex flex-col min-w-0 flex-1">
-                        <span className="text-[10px] font-bold tracking-[0.14em]" style={{ color: T.babyBlue }}>INTELLIGENCE</span>
-                        <span className="text-[9px] leading-tight" style={{ color: T.silver }}>Ahead of a fast-moving field.</span>
+                        <span className="text-[13px] font-bold tracking-[0.14em]" style={{ color: T.babyBlue }}>INTELLIGENCE</span>
+                        <span className="text-[12px] leading-tight" style={{ color: T.silver }}>Ahead of a fast-moving field.</span>
                       </div>
-                      <span className="text-[11px] font-mono font-bold" style={{ color: T.babyBlue }}>{intel?.count ?? "—"}</span>
+                      <span className="text-[13px] font-mono font-bold" style={{ color: T.babyBlue }}>{intel?.count ?? "—"}</span>
                     </div>
                   </div>
 
                   {/* live cyber + AI intelligence feed */}
                   <div className="flex items-center gap-2 mb-2 flex-shrink-0">
-                    <span className="text-[9px] font-bold tracking-[0.2em]" style={{ color: T.babyBlue }}>INTELLIGENCE FEED</span>
-                    <span className="flex items-center gap-1 text-[7px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                    <span className="text-[12px] font-bold tracking-[0.2em]" style={{ color: T.babyBlue }}>INTELLIGENCE FEED</span>
+                    <span className="flex items-center gap-1 text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
                       style={{ background: `${T.neonGreen}18`, border: `1px solid ${T.neonGreen}50`, color: T.neonGreen }}>
                       <motion.span className="w-1 h-1 rounded-full inline-block" style={{ background: T.neonGreen }}
                         animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.4, repeat: Infinity }} />
                       LIVE
                     </span>
-                    <span className="ml-auto text-[7px] tracking-wider" style={{ color: T.silverDim }}>CYBER · AI</span>
+                    <span className="ml-auto text-[11px] tracking-wider" style={{ color: T.silverDim }}>CYBER · AI</span>
                   </div>
                   {intel && intel.items.length > 0 ? (
                     <div className="flex-1 overflow-y-auto pr-1 cs-scroll space-y-1.5 min-h-0">
@@ -1638,17 +1638,17 @@ export default function CyberShieldCommandCenter() {
                             className="block rounded-lg p-2 transition-colors hover:bg-white/5"
                             style={{ background: `${T.royalBlue}14`, border: `1px solid ${T.royalBlue}40` }}>
                             <div className="flex items-start gap-2">
-                              <span className="text-[7px] font-bold tracking-wider px-1 py-0.5 rounded flex-shrink-0 mt-0.5"
+                              <span className="text-[11px] font-bold tracking-wider px-1 py-0.5 rounded flex-shrink-0 mt-0.5"
                                 style={{ background: `${c}1F`, border: `1px solid ${c}55`, color: c }}>{it.kind === "ai" ? "AI" : "CYBER"}</span>
-                              <span className="text-[10px] leading-snug flex-1" style={{ color: "#E6EDF3" }}>{it.title}</span>
+                              <span className="text-[13px] leading-snug flex-1" style={{ color: "#E6EDF3" }}>{it.title}</span>
                             </div>
-                            <div className="text-[8px] mt-1 tracking-wide truncate" style={{ color: T.silverDim }}>{it.source}</div>
+                            <div className="text-[11px] mt-1 tracking-wide truncate" style={{ color: T.silverDim }}>{it.source}</div>
                           </a>
                         );
                       })}
                     </div>
                   ) : (
-                    <div className="text-[10px]" style={{ color: T.silverDim }}>{intel ? "Feed quiet right now." : "Loading live intelligence…"}</div>
+                    <div className="text-[13px]" style={{ color: T.silverDim }}>{intel ? "Feed quiet right now." : "Loading live intelligence…"}</div>
                   )}
                 </>
               )}
@@ -1657,8 +1657,8 @@ export default function CyberShieldCommandCenter() {
               {rightTab === "fixtures" && (
                 <>
                   <div className="flex items-center justify-between mb-3 flex-shrink-0">
-                    <span className="text-[11px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>PC DIGITAL SOLUTIONS</span>
-                    <span className="text-[8px] tracking-[0.16em]" style={{ color: T.silverDim }}>BY ACP</span>
+                    <span className="text-[13px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>PC DIGITAL SOLUTIONS</span>
+                    <span className="text-[11px] tracking-[0.16em]" style={{ color: T.silverDim }}>BY ACP</span>
                   </div>
                   <div className="flex-1 overflow-y-auto pr-1 cs-scroll space-y-2.5 min-h-0">
 
@@ -1666,9 +1666,9 @@ export default function CyberShieldCommandCenter() {
                     <div className="rounded-lg p-3" style={{ background: `linear-gradient(135deg, ${T.royalBlue}33, ${T.panel})`, border: `1px solid ${T.babyBlue}44` }}>
                       <div className="flex items-center gap-2 mb-1.5">
                         <EagleMark size={16} />
-                        <span className="text-[11px] font-black tracking-wide" style={{ color: "#fff" }}>Cyber defense, built for people.</span>
+                        <span className="text-[13px] font-black tracking-wide" style={{ color: "#fff" }}>Cyber defense, built for people.</span>
                       </div>
-                      <p className="text-[10px] leading-relaxed" style={{ color: T.silver }}>
+                      <p className="text-[13px] leading-relaxed" style={{ color: T.silver }}>
                         AI security tools that protect the communities enterprise security overlooks —
                         multilingual, community-trained, and honest about what they do. CyberShield is the proof.
                       </p>
@@ -1677,11 +1677,11 @@ export default function CyberShieldCommandCenter() {
                     {/* current product */}
                     <div className="rounded-lg p-2.5" style={{ background: `${T.neonGreen}0C`, border: `1px solid ${T.neonGreen}33` }}>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[8px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                        <span className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
                           style={{ background: `${T.neonGreen}18`, border: `1px solid ${T.neonGreen}55`, color: T.neonGreen }}>LIVE</span>
-                        <span className="text-[11px] font-bold" style={{ color: "#fff" }}>CyberShield AI</span>
+                        <span className="text-[13px] font-bold" style={{ color: "#fff" }}>CyberShield AI</span>
                       </div>
-                      <p className="text-[9px] leading-relaxed" style={{ color: T.silver }}>
+                      <p className="text-[12px] leading-relaxed" style={{ color: T.silver }}>
                         Community-trained scam defense. Mission 1 — World Cup 2026 — complete; Super Bowl LXI up next.
                       </p>
                     </div>
@@ -1689,11 +1689,11 @@ export default function CyberShieldCommandCenter() {
                     {/* future product */}
                     <div className="rounded-lg p-2.5" style={{ background: `${GOLD}0C`, border: `1px dashed ${GOLD}55` }}>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[8px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                        <span className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
                           style={{ background: `${GOLD}18`, border: `1px solid ${GOLD}55`, color: GOLD }}>COMING SOON</span>
-                        <span className="text-[11px] font-bold" style={{ color: "#fff" }}>CyberShield Enterprise</span>
+                        <span className="text-[13px] font-bold" style={{ color: "#fff" }}>CyberShield Enterprise</span>
                       </div>
-                      <p className="text-[9px] leading-relaxed" style={{ color: T.silver }}>
+                      <p className="text-[12px] leading-relaxed" style={{ color: T.silver }}>
                         The same engine, scaled for teams — agentic threat triage, identity &amp; secrets guardrails,
                         and multilingual security operations.
                       </p>
@@ -1703,9 +1703,9 @@ export default function CyberShieldCommandCenter() {
                     <a href="https://github.com/PC-DigitalSolutions" target="_blank" rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 rounded-lg py-2.5 transition-transform hover:scale-[1.02]"
                       style={{ background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#04101f", boxShadow: `0 0 16px ${T.babyBlue}45` }}>
-                      <span className="text-[10px] font-black tracking-[0.14em]">VIEW OUR WORK ON GITHUB ↗</span>
+                      <span className="text-[13px] font-black tracking-[0.14em]">VIEW OUR WORK ON GITHUB ↗</span>
                     </a>
-                    <div className="text-center text-[8px] tracking-[0.18em] pt-0.5" style={{ color: T.silverDim }}>
+                    <div className="text-center text-[11px] tracking-[0.18em] pt-0.5" style={{ color: T.silverDim }}>
                       STRENGTH · VIGILANCE · INTELLIGENCE
                     </div>
                   </div>
@@ -1716,12 +1716,12 @@ export default function CyberShieldCommandCenter() {
               {rightTab === "news" && (
                 <>
                   <div className="flex items-center justify-between mb-1 flex-shrink-0">
-                    <span className="flex items-center gap-2 text-[11px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>
-                      <span className="text-[13px] leading-none">🌐</span>
+                    <span className="flex items-center gap-2 text-[13px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>
+                      <span className="text-[15px] leading-none">🌐</span>
                       LIVE THREAT MONITOR
                     </span>
                   </div>
-                  <div className="text-[9px] tracking-[0.14em] mb-3 flex-shrink-0" style={{ color: T.silverDim }}>
+                  <div className="text-[12px] tracking-[0.14em] mb-3 flex-shrink-0" style={{ color: T.silverDim }}>
                     {threatFeed ? `LIVE · GOOGLE NEWS · ${threatFeed.total_seen} SCANNED` : "CONNECTING…"}
                   </div>
                   <div className="flex-1 overflow-y-auto pr-1 cs-scroll space-y-3 min-h-0">
@@ -1734,22 +1734,22 @@ export default function CyberShieldCommandCenter() {
                           className="rounded-lg p-3" style={{ background: `${T.royalBlue}18`, borderLeft: `3px solid ${c}` }}>
                           {/* tag row */}
                           <div className="flex items-center gap-1.5 mb-1.5">
-                            <span className="text-[8px] font-bold tracking-widest px-1.5 py-0.5 rounded-sm"
+                            <span className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-sm"
                               style={{ background: `${c}1F`, border: `1px solid ${c}55`, color: c }}>
                               {isThreat ? t.severity : "NEWS"}
                             </span>
-                            <span className="text-[9px] font-semibold tracking-wide truncate" style={{ color: c }}>{t.agent}</span>
-                            <span className="ml-auto text-[9px] flex-shrink-0" style={{ color: T.silverDim }}>{timeAgo(t.ts)}</span>
+                            <span className="text-[12px] font-semibold tracking-wide truncate" style={{ color: c }}>{t.agent}</span>
+                            <span className="ml-auto text-[12px] flex-shrink-0" style={{ color: T.silverDim }}>{timeAgo(t.ts)}</span>
                           </div>
                           {/* headline */}
-                          <div className="text-[12px] leading-relaxed mb-1" style={{ color: "#E6EDF3" }}>{t.title}</div>
-                          <div className="text-[9px] mb-2 truncate" style={{ color: T.silverDim }}>{t.source || "Threat wire"}</div>
+                          <div className="text-[14px] leading-relaxed mb-1" style={{ color: "#E6EDF3" }}>{t.title}</div>
+                          <div className="text-[12px] mb-2 truncate" style={{ color: T.silverDim }}>{t.source || "Threat wire"}</div>
                           {/* recommendation */}
                           {t.recommendation && (
                             <div className="flex items-start gap-2 rounded-md p-2 mb-2"
                               style={{ background: `${c}12`, border: `1px solid ${c}33` }}>
                               <span className="mt-0.5 flex-shrink-0"><EagleMark size={13} color={c} glow="#00000000" /></span>
-                              <span className="text-[10px] leading-snug" style={{ color: T.silver }}>
+                              <span className="text-[13px] leading-snug" style={{ color: T.silver }}>
                                 <span className="font-bold" style={{ color: c }}>El Guardián: </span>{t.recommendation}
                               </span>
                             </div>
@@ -1757,13 +1757,13 @@ export default function CyberShieldCommandCenter() {
                           {/* actions */}
                           <div className="flex items-center gap-2">
                             <button onClick={() => askGuardian(t.title)}
-                              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-[9px] font-bold tracking-[0.16em] transition-transform hover:scale-[1.02]"
+                              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-[12px] font-bold tracking-[0.16em] transition-transform hover:scale-[1.02]"
                               style={{ background: c, color: "#04101f", boxShadow: `0 0 12px ${c}55` }}>
                               <EagleMark size={13} color="#04101f" glow="#00000000" />
                               ASK EL GUARDIÁN
                             </button>
                             <a href={t.link} target="_blank" rel="noopener noreferrer"
-                              className="px-2.5 py-1.5 rounded-md text-[9px] font-bold tracking-wide transition-colors hover:bg-white/5"
+                              className="px-2.5 py-1.5 rounded-md text-[12px] font-bold tracking-wide transition-colors hover:bg-white/5"
                               style={{ border: `1px solid ${T.neonGreen}60`, color: T.neonGreen }}>
                               READ ↗
                             </a>
@@ -1771,7 +1771,7 @@ export default function CyberShieldCommandCenter() {
                         </motion.div>
                       );
                     }) : (
-                      <div className="text-[11px]" style={{ color: T.silverDim }}>Scanning live threat feeds…</div>
+                      <div className="text-[13px]" style={{ color: T.silverDim }}>Scanning live threat feeds…</div>
                     )}
                   </div>
                 </>
@@ -1787,7 +1787,7 @@ export default function CyberShieldCommandCenter() {
       <div className="flex items-center gap-3 flex-shrink-0 py-1 pr-1"
         style={{ borderTop: `1px solid ${T.royalBlue}40` }}>
         <div className="relative overflow-hidden flex-1 min-w-0">
-          <div className="cs-ticker flex w-max whitespace-nowrap text-[9px] tracking-[0.25em]" style={{ color: T.silverDim }}>
+          <div className="cs-ticker flex w-max whitespace-nowrap text-[12px] tracking-[0.25em]" style={{ color: T.silverDim }}>
             {[0, 1].map(k => (
               <span key={k} className="flex items-center">
                 {[
@@ -1813,7 +1813,7 @@ export default function CyberShieldCommandCenter() {
         {/* Beta tester feedback — standalone call to action */}
         <motion.a href={FEEDBACK_FORM_URL} target="_blank" rel="noopener noreferrer"
           whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-          className="flex items-center gap-2 flex-shrink-0 px-3.5 py-1.5 rounded-full text-[9px] font-black tracking-[0.18em]"
+          className="flex items-center gap-2 flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-black tracking-[0.18em]"
           style={{
             background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`,
             color: "#04101f",
