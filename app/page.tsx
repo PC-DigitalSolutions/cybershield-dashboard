@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Shield, Home, Crosshair, ChevronRight, Paperclip } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import RichText from "./components/RichText";
+import { MISSIONS, type Mission } from "./missions";
 
 // Set NEXT_PUBLIC_API_BASE in your host (e.g. Vercel) to the deployed backend URL.
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
@@ -101,6 +102,9 @@ const SEVERITY_COLOR: Record<string, string> = {
   INFO:     "#00CFFF",
 };
 
+type IntelItem = { title: string; link: string; source: string; published: string; kind: "ai" | "cyber" };
+type IntelFeed = { status: string; count: number; items: IntelItem[] };
+
 type GoalieTurn = { role: "user" | "model"; text: string; matches?: number; file?: string };
 type Story = { id: number; created: number; story: string; scam_type: string; language: string };
 type StoryFeed = {
@@ -154,17 +158,6 @@ function timeAgo(ts: number): string {
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}h ago`;
   return `${Math.floor(h / 24)}d ago`;
-}
-
-function kickoffLabel(utcDate: string | null): string {
-  if (!utcDate) return "TBD";
-  const d = new Date(utcDate);
-  const today = new Date();
-  const sameDay = d.toDateString() === today.toDateString();
-  const time = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
-  if (sameDay) return `TODAY ${time}`;
-  const day = d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
-  return `${day} ${time}`;
 }
 
 const GATE_TO_INDEX: Record<string, number> = { "Gate A": 0, "Gate B": 1, "Gate C": 2, "Gate D": 3 };
@@ -862,6 +855,142 @@ function GoalieZone({ active }: { active: boolean }) {
   );
 }
 
+const LANG_LABEL: Record<string, string> = { en: "English", es: "Español", unknown: "Unspecified" };
+
+function MissionTile({ label, value, color }: { label: string; value: React.ReactNode; color: string }) {
+  return (
+    <div className="flex flex-col gap-1 px-3 py-2.5 rounded"
+      style={{ background: `${color}0E`, border: `1px solid ${color}33` }}>
+      <span className="text-[18px] font-bold font-mono leading-none" style={{ color, textShadow: `0 0 10px ${color}55` }}>{value}</span>
+      <span className="text-[8px] tracking-[0.14em] uppercase" style={{ color: T.silverDim }}>{label}</span>
+    </div>
+  );
+}
+
+function MissionCard({ m }: { m: Mission }) {
+  const h = m.headline;
+  const scam = Object.entries(m.scam_types).sort((a, b) => b[1] - a[1]);
+  const scamMax = Math.max(1, ...scam.map(([, n]) => n));
+  const activity = Object.values(m.activity_by_day);
+  const archived = new Date(m.generated_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+
+  return (
+    <div className="rounded" style={{ background: `${T.royalBlue}12`, border: `1px solid ${T.royalBlue}55` }}>
+      {/* Title bar */}
+      <div className="flex items-center gap-2 px-3.5 py-2.5 flex-wrap"
+        style={{ borderBottom: `1px solid ${T.royalBlue}44` }}>
+        <span className="text-xs">🏆</span>
+        <span className="text-[12px] font-bold tracking-wide" style={{ color: "#fff" }}>{m.name}</span>
+        <span className="text-[9px] font-bold tracking-widest px-2 py-0.5 rounded-full"
+          style={{ background: `${T.neonGreen}18`, border: `1px solid ${T.neonGreen}55`, color: T.neonGreen }}>
+          ✓ COMPLETED MISSION
+        </span>
+        <span className="ml-auto text-[9px] tracking-wider" style={{ color: T.silverDim }}>{m.window}</span>
+      </div>
+
+      <div className="p-3.5 flex flex-col gap-3.5">
+        {/* Headline stat tiles */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {h.threats_assessed != null && (
+            <MissionTile label="Threats assessed" value={h.threats_assessed.toLocaleString()} color={T.babyBlue} />
+          )}
+          <MissionTile label="Stories collected" value={h.stories_collected} color={GOLD} />
+          <MissionTile label="Goalie chats" value={h.goalie_chat_turns} color={T.neonGreen} />
+          <MissionTile label="Intel hit rate" value={`${+(h.community_intel_hit_rate * 100).toFixed(1)}%`} color={T.royalLight} />
+          {h.site_visits != null && <MissionTile label="Site visits" value={h.site_visits.toLocaleString()} color={T.babyBlue} />}
+          {h.feedback_responses != null && <MissionTile label="Feedback" value={h.feedback_responses} color={GOLD} />}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          {/* Scam types */}
+          <div className="flex flex-col gap-1.5">
+            <div className="text-[9px] tracking-[0.16em] uppercase mb-0.5" style={{ color: T.silverDim }}>Threats reported by community</div>
+            {scam.map(([type, n]) => {
+              const meta = SCAM_TYPE_META[type] ?? SCAM_TYPE_META.other;
+              return (
+                <div key={type} className="flex items-center gap-2">
+                  <span className="text-[11px] w-4 text-center">{meta.icon}</span>
+                  <span className="text-[10px] flex-shrink-0 w-24 truncate" style={{ color: T.silver }}>{meta.label}</span>
+                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: `${T.royalBlue}40` }}>
+                    <div className="h-full rounded-full" style={{ width: `${(n / scamMax) * 100}%`, background: T.babyBlue, boxShadow: `0 0 6px ${T.babyBlue}` }} />
+                  </div>
+                  <span className="text-[10px] font-mono w-4 text-right" style={{ color: T.silverDim }}>{n}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Activity + languages */}
+          <div className="flex flex-col gap-2.5">
+            <div>
+              <div className="text-[9px] tracking-[0.16em] uppercase mb-1.5" style={{ color: T.silverDim }}>Activity over the tournament</div>
+              {activity.length > 0 ? <BarChart values={activity} /> : <div className="text-[10px]" style={{ color: T.silverDim }}>No activity recorded.</div>}
+            </div>
+            <div>
+              <div className="text-[9px] tracking-[0.16em] uppercase mb-1.5" style={{ color: T.silverDim }}>Languages served</div>
+              <div className="flex flex-wrap gap-1.5">
+                {Object.entries(m.languages).map(([lang, n]) => (
+                  <span key={lang} className="text-[9px] tracking-wide px-2 py-0.5 rounded-full"
+                    style={{ background: `${GOLD}12`, border: `1px solid ${GOLD}40`, color: T.silver }}>
+                    {LANG_LABEL[lang] ?? lang} · {n}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-[8px] tracking-wider text-right" style={{ color: T.silverDim }}>
+          Archived {archived} · verifiable local evidence set
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CompletedMissions({ open, onClose }: { open: boolean; onClose: () => void }) {
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 overflow-y-auto"
+          style={{ background: "rgba(2,7,14,0.78)", backdropFilter: "blur(4px)" }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          onClick={onClose}
+        >
+          <motion.div
+            className="w-full max-w-3xl my-auto rounded-lg overflow-hidden"
+            style={{ background: T.panel, border: `1px solid ${T.panelBorder}`, boxShadow: `0 0 40px ${T.royalBlue}55` }}
+            initial={{ scale: 0.96, y: 12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.96, y: 12 }}
+            transition={{ type: "spring", stiffness: 260, damping: 24 }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center gap-2.5 px-4 py-3" style={{ borderBottom: `1px solid ${T.panelBorder}`, background: `linear-gradient(90deg, ${T.royalBlue}30, transparent)` }}>
+              <Crosshair className="w-4 h-4" style={{ color: T.babyBlue }} />
+              <span className="text-[12px] font-bold tracking-[0.22em]" style={{ color: "#fff" }}>COMPLETED MISSIONS</span>
+              <span className="text-[9px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                style={{ background: `${T.babyBlue}18`, border: `1px solid ${T.babyBlue}45`, color: T.babyBlue }}>{MISSIONS.length}</span>
+              <button onClick={onClose} aria-label="Close"
+                className="ml-auto w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 transition-colors"
+                style={{ color: T.silver }}>✕</button>
+            </div>
+
+            {/* Body */}
+            <div className="p-4 flex flex-col gap-3 max-h-[80vh] overflow-y-auto">
+              <p className="text-[10px] leading-relaxed" style={{ color: T.silverDim }}>
+                Archived after-action records from CyberShield deployments. Every figure below is real,
+                anonymized mission data — no personal information leaves the vault.
+              </p>
+              {MISSIONS.map(m => <MissionCard key={m.id} m={m} />)}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export default function CyberShieldCommandCenter() {
   const [input, setInput]     = useState("");
   const [query, setQuery]     = useState("");
@@ -874,21 +1003,13 @@ export default function CyberShieldCommandCenter() {
   const [agentReports, setAgentReports] = useState<AgentReport[]>([]);
   const [analyzedCount, setAnalyzedCount] = useState(0);
   const [blockedCount, setBlockedCount] = useState(0);
-  const [matchFeed, setMatchFeed] = useState<MatchFeed | null>(null);
   const [threatFeed, setThreatFeed] = useState<ThreatFeed | null>(null);
+  const [intel, setIntel] = useState<IntelFeed | null>(null);
   const [rightTab, setRightTab] = useState<"standings" | "fixtures" | "news">("news");
   const [centerTab, setCenterTab] = useState<"guardian" | "goalie">("guardian");
-
-  useEffect(() => {
-    const load = () =>
-      fetch(`${API_BASE}/matches`)
-        .then(r => r.json())
-        .then(setMatchFeed)
-        .catch(() => setMatchFeed(null));
-    load();
-    const t = setInterval(load, 60000);
-    return () => clearInterval(t);
-  }, []);
+  const [showMissions, setShowMissions] = useState(false);
+  const primaryMission = MISSIONS[0];
+  const mh = primaryMission?.headline;
 
   useEffect(() => {
     const load = () =>
@@ -901,9 +1022,18 @@ export default function CyberShieldCommandCenter() {
     return () => clearInterval(t);
   }, []);
 
-  const liveMatch = matchFeed?.source === "live" && matchFeed.live?.length ? matchFeed.live[0] : null;
-  const upcoming = matchFeed?.source === "live" && matchFeed.upcoming?.length ? matchFeed.upcoming : null;
-  const standings = matchFeed?.source === "live" && matchFeed.standings?.length ? matchFeed.standings : null;
+  // Industry Pulse — live cyber + AI news via same-origin Next route (/api/intel).
+  useEffect(() => {
+    const load = () =>
+      fetch(`/api/intel`)
+        .then(r => r.json())
+        .then(setIntel)
+        .catch(() => {});
+    load();
+    const t = setInterval(load, 300000);
+    return () => clearInterval(t);
+  }, []);
+
   const engagedIdx = new Set(agentReports.map(r => GATE_TO_INDEX[r.gate]));
 
   const critCount = threatFeed?.threats.filter(t => t.severity === "CRITICAL").length ?? 0;
@@ -1029,13 +1159,60 @@ export default function CyberShieldCommandCenter() {
           <span className="text-xs inline-block">⚽</span>
           <span className="text-[10px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>FIFA WORLD CUP 2026</span>
           <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold tracking-widest"
-            style={{ background: `${T.neonGreen}20`, border: `1px solid ${T.neonGreen}60`, color: T.neonGreen }}>LIVE</span>
+            style={{ background: `${GOLD}20`, border: `1px solid ${GOLD}60`, color: GOLD }}>CONCLUDED</span>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <div className="w-2 h-2 rounded-full" style={{ background: T.neonGreen, boxShadow: `0 0 6px ${T.neonGreen}` }} />
-          <span className="font-bold tracking-widest" style={{ color: T.neonGreen }}>ALL SYSTEMS ACTIVE</span>
+          <span className="font-bold tracking-widest" style={{ color: T.neonGreen }}>DEFENSE ONLINE</span>
         </div>
       </div>
+
+      {/* ── AFTER-ACTION BANNER — Mission 1 complete; the engine outlives the event ── */}
+      {primaryMission && mh && (
+        <div className="flex flex-shrink-0 px-2">
+          <div className="relative w-full rounded-lg overflow-hidden flex flex-col sm:flex-row items-stretch"
+            style={{
+              backgroundImage: `linear-gradient(90deg, rgba(4,13,26,0.95) 0%, rgba(4,13,26,0.82) 40%, rgba(4,13,26,0.5) 68%, rgba(4,13,26,0.28) 100%), url('/hero-image.PNG')`,
+              backgroundSize: "cover",
+              backgroundPosition: "center right",
+              border: `1px solid ${GOLD}80`,
+              boxShadow: `0 0 24px ${T.royalBlue}66, inset 0 0 34px rgba(0,0,0,0.4)`,
+            }}>
+            {/* gold top accent line */}
+            <span className="absolute top-0 left-0 right-0 h-[2px]"
+              style={{ background: `linear-gradient(90deg, ${GOLD}, ${T.babyBlue} 60%, transparent)` }} />
+            {/* mission complete + the proof numbers */}
+            <div className="flex-1 flex items-center gap-3 px-4 py-2.5 min-w-0">
+              <span className="text-lg flex-shrink-0" style={{ filter: `drop-shadow(0 0 6px ${GOLD}88)` }}>🏆</span>
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[12px] font-black tracking-[0.18em]" style={{ color: "#fff", textShadow: `0 0 12px ${GOLD}66` }}>MISSION 1 COMPLETE</span>
+                  <span className="text-[8px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                    style={{ background: `${T.neonGreen}22`, border: `1px solid ${T.neonGreen}66`, color: T.neonGreen }}>WORLD CUP 2026</span>
+                </div>
+                <span className="text-[9px] tracking-wide mt-0.5 truncate" style={{ color: T.silver }}>
+                  {mh.threats_assessed != null && <><span style={{ color: GOLD }}>{mh.threats_assessed.toLocaleString()}</span> threats assessed · </>}
+                  {mh.goalie_chat_turns} chats handled · {+(mh.community_intel_hit_rate * 100).toFixed(1)}% community-intel hit rate
+                </span>
+              </div>
+            </div>
+            {/* next-mission road — interim proving run → flagship */}
+            <div className="hidden md:flex items-center gap-2 px-4 flex-shrink-0" style={{ borderLeft: `1px solid ${GOLD}33` }}>
+              <span className="text-[8px] tracking-[0.16em] uppercase" style={{ color: T.silver }}>Next up</span>
+              <span className="text-[10px] font-bold tracking-wide whitespace-nowrap" style={{ color: T.babyBlue }}>🏈 Super Bowl LXI</span>
+              <span className="text-[9px]" style={{ color: T.silver }}>→</span>
+              <span className="text-[10px] font-bold tracking-wide whitespace-nowrap" style={{ color: GOLD, textShadow: `0 0 10px ${GOLD}66` }}>🥇 LA 2028</span>
+            </div>
+            {/* CTA → after-action archive */}
+            <button onClick={() => setShowMissions(true)}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 flex-shrink-0 transition-all hover:brightness-110"
+              style={{ background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#04101f", boxShadow: `0 0 18px ${T.babyBlue}55` }}>
+              <Crosshair className="w-3.5 h-3.5" />
+              <span className="text-[10px] font-black tracking-[0.16em] whitespace-nowrap">AFTER-ACTION REPORT</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── GRATITUDE BANNER — Raíces Cyber + beta testers, one calm line ── */}
       <div className="flex items-center justify-center flex-shrink-0 px-2">
@@ -1381,7 +1558,7 @@ export default function CyberShieldCommandCenter() {
           {/* Segmented tab control */}
           <div className="flex-shrink-0 grid grid-cols-3 gap-1 p-1 rounded-lg"
             style={{ background: T.panel, border: `1px solid ${T.royalBlue}55` }}>
-            {([["standings", "Table"], ["fixtures", "Fixtures"], ["news", "News"]] as const).map(([key, label]) => {
+            {([["standings", "Pillars"], ["fixtures", "Company"], ["news", "Threats"]] as const).map(([key, label]) => {
               const active = rightTab === key;
               return (
                 <button key={key} onClick={() => setRightTab(key)}
@@ -1405,106 +1582,133 @@ export default function CyberShieldCommandCenter() {
           <Panel className="flex flex-col max-lg:h-[460px] lg:flex-1 lg:min-h-0" glow>
             <div className="p-4 flex flex-col h-full min-h-0">
 
-              {/* ── TABLE ── */}
+              {/* ── PILLARS · Strength / Vigilance / Intelligence ── */}
               {rightTab === "standings" && (
                 <>
-                  <div className="flex items-center justify-between mb-3 flex-shrink-0">
-                    <span className="text-[11px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>GROUP STAGE</span>
-                    {liveMatch && (
-                      <span className="flex items-center gap-1.5 text-[9px] font-bold tracking-wider px-2 py-0.5 rounded-full"
-                        style={{ background: `${T.neonGreen}15`, border: `1px solid ${T.neonGreen}50`, color: T.neonGreen }}>
-                        <motion.span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: T.neonGreen }}
-                          animate={{ opacity: [1, 0.15, 1] }} transition={{ duration: 1.2, repeat: Infinity }} />
-                        {liveMatch.home.code} {liveMatch.score.home ?? 0}–{liveMatch.score.away ?? 0} {liveMatch.away.code}
-                      </span>
-                    )}
+                  <div className="flex items-center justify-between mb-2.5 flex-shrink-0">
+                    <span className="text-[11px] font-bold tracking-[0.18em]" style={{ color: "#fff" }}>OUR PILLARS</span>
+                    <span className="text-[8px] tracking-[0.16em]" style={{ color: T.silverDim }}>PC DIGITAL SOLUTIONS</span>
                   </div>
-                  {standings ? (
-                    <div className="flex-1 overflow-y-auto pr-1 cs-scroll space-y-4 min-h-0">
-                      {standings.map(g => (
-                        <div key={g.group}>
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <span className="text-[10px] font-bold tracking-[0.18em]" style={{ color: T.babyBlue }}>{g.group.toUpperCase()}</span>
-                            <div className="flex-1 h-px" style={{ background: `${T.royalBlue}55` }} />
-                            <span className="text-[8px] tracking-wider" style={{ color: T.silverDim }}>P&nbsp;&nbsp;PTS</span>
-                          </div>
-                          <div className="space-y-0.5">
-                            {g.table.map((r, i) => {
-                              const adv = (r.position ?? 9) <= 2;
-                              return (
-                                <div key={r.team.code || r.team.name || r.position || i} className="flex items-center gap-2 px-2 py-1.5 rounded-md"
-                                  style={{ background: adv ? `${T.babyBlue}12` : "transparent" }}>
-                                  <span className="w-4 text-center text-[11px] font-bold font-mono"
-                                    style={{ color: adv ? T.babyBlue : T.silverDim }}>{r.position}</span>
-                                  {r.team.crest && (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={r.team.crest} alt="" className="w-4 h-4 object-contain flex-shrink-0" />
-                                  )}
-                                  <span className="flex-1 truncate text-[12px]" style={{ color: adv ? "#E6EDF3" : T.silver }}>
-                                    {r.team.name || r.team.code}
-                                  </span>
-                                  <span className="w-5 text-center text-[11px] font-mono" style={{ color: T.silverDim }}>{r.played}</span>
-                                  <span className="w-6 text-right text-[12px] font-mono font-bold" style={{ color: GOLD }}>{r.points}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-[11px]" style={{ color: T.silverDim }}>Awaiting live standings…</div>
-                  )}
-                </>
-              )}
 
-              {/* ── FIXTURES ── */}
-              {rightTab === "fixtures" && (
-                <>
-                  <div className="flex items-center justify-between mb-3 flex-shrink-0">
-                    <span className="text-[11px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>UPCOMING FIXTURES</span>
-                    <span className="text-[8px] tracking-[0.16em]" style={{ color: T.silverDim }}>CYBERSHIELD THREAT</span>
+                  {/* three values, each with a live signal */}
+                  <div className="flex flex-col gap-1.5 mb-3 flex-shrink-0">
+                    <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg" style={{ background: `${GOLD}0E`, border: `1px solid ${GOLD}33` }}>
+                      <span className="text-sm">💪</span>
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className="text-[10px] font-bold tracking-[0.14em]" style={{ color: GOLD }}>STRENGTH</span>
+                        <span className="text-[9px] leading-tight" style={{ color: T.silver }}>Defense that holds — one mission proven.</span>
+                      </div>
+                      <span className="text-[11px] font-mono font-bold" style={{ color: GOLD }}>{mh?.threats_assessed?.toLocaleString() ?? "—"}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg" style={{ background: `${T.neonGreen}0E`, border: `1px solid ${T.neonGreen}33` }}>
+                      <span className="text-sm">🛡️</span>
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className="text-[10px] font-bold tracking-[0.14em]" style={{ color: T.neonGreen }}>VIGILANCE</span>
+                        <span className="text-[9px] leading-tight" style={{ color: T.silver }}>Always watching the wire, live.</span>
+                      </div>
+                      <span className="text-[11px] font-mono font-bold" style={{ color: T.neonGreen }}>{threatFeed?.total_seen ?? "—"}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg" style={{ background: `${T.babyBlue}0E`, border: `1px solid ${T.babyBlue}33` }}>
+                      <span className="text-sm">🧠</span>
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className="text-[10px] font-bold tracking-[0.14em]" style={{ color: T.babyBlue }}>INTELLIGENCE</span>
+                        <span className="text-[9px] leading-tight" style={{ color: T.silver }}>Ahead of a fast-moving field.</span>
+                      </div>
+                      <span className="text-[11px] font-mono font-bold" style={{ color: T.babyBlue }}>{intel?.count ?? "—"}</span>
+                    </div>
                   </div>
-                  {upcoming ? (
-                    <div className="flex-1 overflow-y-auto pr-1 cs-scroll space-y-2 min-h-0">
-                      {upcoming.slice(0, 8).map((m, i) => {
-                        const lvl = m.threat?.level ?? "GUARDED";
-                        const c = LEVEL_COLOR[lvl] ?? T.silverDim;
+
+                  {/* live cyber + AI intelligence feed */}
+                  <div className="flex items-center gap-2 mb-2 flex-shrink-0">
+                    <span className="text-[9px] font-bold tracking-[0.2em]" style={{ color: T.babyBlue }}>INTELLIGENCE FEED</span>
+                    <span className="flex items-center gap-1 text-[7px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                      style={{ background: `${T.neonGreen}18`, border: `1px solid ${T.neonGreen}50`, color: T.neonGreen }}>
+                      <motion.span className="w-1 h-1 rounded-full inline-block" style={{ background: T.neonGreen }}
+                        animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.4, repeat: Infinity }} />
+                      LIVE
+                    </span>
+                    <span className="ml-auto text-[7px] tracking-wider" style={{ color: T.silverDim }}>CYBER · AI</span>
+                  </div>
+                  {intel && intel.items.length > 0 ? (
+                    <div className="flex-1 overflow-y-auto pr-1 cs-scroll space-y-1.5 min-h-0">
+                      {intel.items.map((it, i) => {
+                        const c = it.kind === "ai" ? T.babyBlue : "#FF8C42";
                         return (
-                          <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.04 * i }}
-                            className="rounded-lg p-2.5" style={{ background: `${T.royalBlue}1A`, border: `1px solid ${c}40` }}>
-                            <div className="flex items-center justify-between gap-2 mb-1.5">
-                              <span className="flex items-center gap-1.5 text-[13px] font-semibold truncate" style={{ color: "#E6EDF3" }}>
-                                {m.home.crest && (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img src={m.home.crest} alt="" className="w-4 h-4 object-contain flex-shrink-0" />
-                                )}
-                                {m.home.code || m.home.name}
-                                <span className="text-[10px] font-normal" style={{ color: T.silverDim }}>vs</span>
-                                {m.away.code || m.away.name}
-                                {m.away.crest && (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img src={m.away.crest} alt="" className="w-4 h-4 object-contain flex-shrink-0" />
-                                )}
-                              </span>
-                              <span className="flex items-center gap-1 text-[8px] font-bold tracking-widest px-2 py-1 rounded-full flex-shrink-0"
-                                style={{ background: `${c}1F`, border: `1px solid ${c}66`, color: c }}>
-                                <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: c }} />
-                                {lvl}
-                              </span>
+                          <a key={i} href={it.link} target="_blank" rel="noopener noreferrer"
+                            className="block rounded-lg p-2 transition-colors hover:bg-white/5"
+                            style={{ background: `${T.royalBlue}14`, border: `1px solid ${T.royalBlue}40` }}>
+                            <div className="flex items-start gap-2">
+                              <span className="text-[7px] font-bold tracking-wider px-1 py-0.5 rounded flex-shrink-0 mt-0.5"
+                                style={{ background: `${c}1F`, border: `1px solid ${c}55`, color: c }}>{it.kind === "ai" ? "AI" : "CYBER"}</span>
+                              <span className="text-[10px] leading-snug flex-1" style={{ color: "#E6EDF3" }}>{it.title}</span>
                             </div>
-                            <div className="flex items-center justify-between text-[10px]" style={{ color: T.silverDim }}>
-                              <span>{kickoffLabel(m.utcDate)}{m.group ? ` · ${m.group.toUpperCase()}` : ""}</span>
-                              {m.threat && <span style={{ color: c }}>{m.threat.agent}</span>}
-                            </div>
-                          </motion.div>
+                            <div className="text-[8px] mt-1 tracking-wide truncate" style={{ color: T.silverDim }}>{it.source}</div>
+                          </a>
                         );
                       })}
                     </div>
                   ) : (
-                    <div className="text-[11px]" style={{ color: T.silverDim }}>Awaiting fixtures…</div>
+                    <div className="text-[10px]" style={{ color: T.silverDim }}>{intel ? "Feed quiet right now." : "Loading live intelligence…"}</div>
                   )}
+                </>
+              )}
+
+              {/* ── PC DIGITAL SOLUTIONS · company spotlight ── */}
+              {rightTab === "fixtures" && (
+                <>
+                  <div className="flex items-center justify-between mb-3 flex-shrink-0">
+                    <span className="text-[11px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>PC DIGITAL SOLUTIONS</span>
+                    <span className="text-[8px] tracking-[0.16em]" style={{ color: T.silverDim }}>BY ACP</span>
+                  </div>
+                  <div className="flex-1 overflow-y-auto pr-1 cs-scroll space-y-2.5 min-h-0">
+
+                    {/* brand statement */}
+                    <div className="rounded-lg p-3" style={{ background: `linear-gradient(135deg, ${T.royalBlue}33, ${T.panel})`, border: `1px solid ${T.babyBlue}44` }}>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <EagleMark size={16} />
+                        <span className="text-[11px] font-black tracking-wide" style={{ color: "#fff" }}>Cyber defense, built for people.</span>
+                      </div>
+                      <p className="text-[10px] leading-relaxed" style={{ color: T.silver }}>
+                        AI security tools that protect the communities enterprise security overlooks —
+                        multilingual, community-trained, and honest about what they do. CyberShield is the proof.
+                      </p>
+                    </div>
+
+                    {/* current product */}
+                    <div className="rounded-lg p-2.5" style={{ background: `${T.neonGreen}0C`, border: `1px solid ${T.neonGreen}33` }}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[8px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                          style={{ background: `${T.neonGreen}18`, border: `1px solid ${T.neonGreen}55`, color: T.neonGreen }}>LIVE</span>
+                        <span className="text-[11px] font-bold" style={{ color: "#fff" }}>CyberShield AI</span>
+                      </div>
+                      <p className="text-[9px] leading-relaxed" style={{ color: T.silver }}>
+                        Community-trained scam defense. Mission 1 — World Cup 2026 — complete; Super Bowl LXI up next.
+                      </p>
+                    </div>
+
+                    {/* future product */}
+                    <div className="rounded-lg p-2.5" style={{ background: `${GOLD}0C`, border: `1px dashed ${GOLD}55` }}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[8px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                          style={{ background: `${GOLD}18`, border: `1px solid ${GOLD}55`, color: GOLD }}>COMING SOON</span>
+                        <span className="text-[11px] font-bold" style={{ color: "#fff" }}>CyberShield Enterprise</span>
+                      </div>
+                      <p className="text-[9px] leading-relaxed" style={{ color: T.silver }}>
+                        The same engine, scaled for teams — agentic threat triage, identity &amp; secrets guardrails,
+                        and multilingual security operations.
+                      </p>
+                    </div>
+
+                    {/* CTA */}
+                    <a href="https://github.com/PC-DigitalSolutions" target="_blank" rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 rounded-lg py-2.5 transition-transform hover:scale-[1.02]"
+                      style={{ background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#04101f", boxShadow: `0 0 16px ${T.babyBlue}45` }}>
+                      <span className="text-[10px] font-black tracking-[0.14em]">VIEW OUR WORK ON GITHUB ↗</span>
+                    </a>
+                    <div className="text-center text-[8px] tracking-[0.18em] pt-0.5" style={{ color: T.silverDim }}>
+                      STRENGTH · VIGILANCE · INTELLIGENCE
+                    </div>
+                  </div>
                 </>
               )}
 
@@ -1514,7 +1718,7 @@ export default function CyberShieldCommandCenter() {
                   <div className="flex items-center justify-between mb-1 flex-shrink-0">
                     <span className="flex items-center gap-2 text-[11px] font-bold tracking-[0.2em]" style={{ color: "#fff" }}>
                       <span className="text-[13px] leading-none">🌐</span>
-                      WORLD CUP NEWS
+                      LIVE THREAT MONITOR
                     </span>
                   </div>
                   <div className="text-[9px] tracking-[0.14em] mb-3 flex-shrink-0" style={{ color: T.silverDim }}>
@@ -1539,7 +1743,7 @@ export default function CyberShieldCommandCenter() {
                           </div>
                           {/* headline */}
                           <div className="text-[12px] leading-relaxed mb-1" style={{ color: "#E6EDF3" }}>{t.title}</div>
-                          <div className="text-[9px] mb-2 truncate" style={{ color: T.silverDim }}>{t.source || "World Cup wire"}</div>
+                          <div className="text-[9px] mb-2 truncate" style={{ color: T.silverDim }}>{t.source || "Threat wire"}</div>
                           {/* recommendation */}
                           {t.recommendation && (
                             <div className="flex items-start gap-2 rounded-md p-2 mb-2"
@@ -1567,7 +1771,7 @@ export default function CyberShieldCommandCenter() {
                         </motion.div>
                       );
                     }) : (
-                      <div className="text-[11px]" style={{ color: T.silverDim }}>Scanning live World Cup feeds…</div>
+                      <div className="text-[11px]" style={{ color: T.silverDim }}>Scanning live threat feeds…</div>
                     )}
                   </div>
                 </>
@@ -1587,7 +1791,9 @@ export default function CyberShieldCommandCenter() {
             {[0, 1].map(k => (
               <span key={k} className="flex items-center">
                 {[
-                  "FIFA WORLD CUP 2026", "JUNE 11 — JULY 19", "48 TEAMS", "104 MATCHES", "16 HOST CITIES",
+                  "MISSION 1 COMPLETE", "FIFA WORLD CUP 2026 · JUN 11 — JUL 19",
+                  "NEXT MISSION · SUPER BOWL LXI · FEB 2027", "ROAD TO LA 2028 OLYMPICS",
+                  "48 TEAMS", "104 MATCHES", "16 HOST CITIES",
                   "ATLANTA", "BOSTON", "DALLAS", "GUADALAJARA", "HOUSTON", "KANSAS CITY", "LOS ANGELES",
                   "MEXICO CITY", "MIAMI", "MONTERREY", "NEW YORK / NEW JERSEY", "PHILADELPHIA",
                   "SAN FRANCISCO", "SEATTLE", "TORONTO", "VANCOUVER",
@@ -1617,6 +1823,8 @@ export default function CyberShieldCommandCenter() {
           GIVE FEEDBACK ↗
         </motion.a>
       </div>
+
+      <CompletedMissions open={showMissions} onClose={() => setShowMissions(false)} />
     </div>
   );
 }

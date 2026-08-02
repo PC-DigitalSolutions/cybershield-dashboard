@@ -1,0 +1,39 @@
+{
+  "id": "wc2026",
+  "name": "FIFA World Cup 2026 Intel",
+  "status": "complete",
+  "window": "2026-06-11 / 2026-07-19",
+  "generated_at": "2026-07-27T21:30:28.615965+00:00",
+  "headline": {
+    "stories_collected": 9,
+    "usage_events": 46,
+    "goalie_chat_turns": 40,
+    "community_intel_hit_rate": 0.275,
+    "threats_assessed": 2419
+  },
+  "scam_types": {
+    "tickets": 2,
+    "impersonation": 2,
+    "dating": 2,
+    "smishing": 1,
+    "sugar": 1,
+    "sextortion": 1
+  },
+  "languages": {
+    "en": 4,
+    "es": 3,
+    "unknown": 2
+  },
+  "activity_by_day": {
+    "2026-07-04": 1,
+    "2026-07-06": 9,
+    "2026-07-07": 1,
+    "2026-07-08": 13,
+    "2026-07-09": 2,
+    "2026-07-11": 1,
+    "2026-07-13": 1,
+    "2026-07-14": 14,
+    "2026-07-15": 3,
+    "2026-07-19": 1
+  }
+}
