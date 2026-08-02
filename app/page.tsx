@@ -1417,9 +1417,9 @@ export default function CyberShieldCommandCenter() {
 
               {/* Primary action — the one clear thing to do on arrival */}
               <p className="text-center text-[14px] leading-relaxed mb-3 px-4" style={{ color: T.silver }}>
-                Paste anything that feels off — a link, a message, a too-good-to-be-true offer —
-                and El Guardián checks it in seconds.
-                <span style={{ color: T.silverDim }}> Not sure where to start? Tap an example.</span>
+                Something feel off? Drop the link, message, or offer here. El Guardián reads it
+                in seconds and gives you a clear, plain-language verdict.
+                <span style={{ color: T.silverDim }}> New here? Tap an example to see it work.</span>
               </p>
 
               {/* Quick-ask chips — the guided entry point, promoted above the stats */}
