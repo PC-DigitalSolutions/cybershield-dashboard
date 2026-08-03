@@ -5,6 +5,7 @@ import { Shield, Home, Crosshair, ChevronRight, Paperclip } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import RichText from "./components/RichText";
 import { MISSIONS, type Mission } from "./missions";
+import { VIP_EVENTS, CONCERT_SCAM_META, type VipEvent } from "./events";
 
 // Set NEXT_PUBLIC_API_BASE in your host (e.g. Vercel) to the deployed backend URL.
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
@@ -949,19 +950,21 @@ function MissionCard({ m }: { m: Mission }) {
 }
 
 function CompletedMissions({ open, onClose }: { open: boolean; onClose: () => void }) {
+  // Render nothing when closed so the overlay unmounts instantly — the previous
+  // AnimatePresence exit left an invisible full-screen click-trap after closing.
+  if (!open) return null;
   return (
-    <AnimatePresence>
-      {open && (
+    <>
         <motion.div
           className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 overflow-y-auto"
           style={{ background: "rgba(2,7,14,0.78)", backdropFilter: "blur(4px)" }}
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           onClick={onClose}
         >
           <motion.div
             className="w-full max-w-3xl my-auto rounded-lg overflow-hidden"
             style={{ background: T.panel, border: `1px solid ${T.panelBorder}`, boxShadow: `0 0 40px ${T.royalBlue}55` }}
-            initial={{ scale: 0.96, y: 12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.96, y: 12 }}
+            initial={{ scale: 0.96, y: 12 }} animate={{ scale: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 260, damping: 24 }}
             onClick={e => e.stopPropagation()}
           >
@@ -986,8 +989,129 @@ function CompletedMissions({ open, onClose }: { open: boolean; onClose: () => vo
             </div>
           </motion.div>
         </motion.div>
-      )}
-    </AnimatePresence>
+    </>
+  );
+}
+
+// Vibrant, artist-energy accents — cycled across the VIP tour cards.
+const EVENT_ACCENTS = [
+  "#FF4D8D", "#F2C14E", "#00CFFF", "#A855F7", "#FF6B35", "#39FF14",
+  "#FF3B7B", "#4ADE80", "#38BDF8", "#FB7185", "#C084FC",
+];
+
+function EventCard({ e, accent, onAsk }: { e: VipEvent; accent: string; onAsk: (e: VipEvent) => void }) {
+  return (
+    <motion.div
+      whileHover={{ y: -3, scale: 1.012 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="rounded-lg overflow-hidden flex flex-col"
+      style={{
+        background: `linear-gradient(150deg, ${accent}22, ${T.royalBlue}10 58%, transparent)`,
+        border: `1px solid ${accent}55`,
+      }}
+    >
+      <span className="block h-[3px] w-full" style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }} />
+      <div className="p-3.5 flex flex-col gap-3 flex-1">
+        {/* Artist header */}
+        <div className="flex items-center gap-2.5">
+          <span className="text-2xl leading-none flex-shrink-0">{e.flag}</span>
+          <div className="min-w-0">
+            <div className="text-[15px] font-bold tracking-wide truncate" style={{ color: "#fff" }}>{e.artist}</div>
+            <div className="text-[12px] truncate" style={{ color: T.silverDim }}>{e.genre} · {e.origin}</div>
+          </div>
+          <span className="ml-auto text-[11px] font-bold tracking-widest px-2 py-0.5 rounded-full whitespace-nowrap"
+            style={{ background: `${accent}1E`, border: `1px solid ${accent}66`, color: accent }}>
+            UPCOMING
+          </span>
+        </div>
+
+        {/* Threat profile — what El Guardián defends against */}
+        <div className="flex flex-col gap-1.5">
+          <div className="text-[11px] tracking-[0.16em] uppercase" style={{ color: T.silverDim }}>El Guardián defends against</div>
+          <div className="flex flex-wrap gap-1.5">
+            {e.scams.map(s => {
+              const m = CONCERT_SCAM_META[s];
+              return (
+                <span key={s} title={m.label}
+                  className="text-[12px] px-2 py-0.5 rounded-full inline-flex items-center gap-1"
+                  style={{ background: `${T.royalBlue}26`, border: `1px solid ${T.royalBlue}66`, color: T.silver }}>
+                  <span>{m.icon}</span>{m.short}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Reach */}
+        <div className="flex flex-wrap gap-1.5">
+          {e.reach.map(r => (
+            <span key={r} className="text-[11px] px-1.5 py-0.5 rounded-full"
+              style={{ background: `${GOLD}12`, border: `1px solid ${GOLD}33`, color: T.silverDim }}>{r}</span>
+          ))}
+        </div>
+
+        {/* The hook — one tap into a live, tailored El Guardián briefing */}
+        <button onClick={() => onAsk(e)}
+          className="mt-auto w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-md transition-transform hover:scale-[1.02] active:scale-[0.99]"
+          style={{ background: `linear-gradient(135deg, ${accent}, ${accent}AA)`, color: "#0a0a0a", boxShadow: `0 0 18px ${accent}55` }}>
+          <Shield className="w-4 h-4" />
+          <span className="text-[13px] font-bold tracking-[0.12em]">PROTECT MY TICKETS</span>
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+function VipTours({ open, onClose, onAsk }: { open: boolean; onClose: () => void; onAsk: (e: VipEvent) => void }) {
+  // Render nothing when closed so the overlay unmounts instantly and can never
+  // linger as an invisible click-trap. Enter animation is kept via motion; no
+  // exit animation (AnimatePresence's exit-removal was failing to unmount here).
+  if (!open) return null;
+  return (
+    <motion.div
+      className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 overflow-y-auto"
+      style={{ background: "rgba(2,7,14,0.8)", backdropFilter: "blur(4px)" }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="w-full max-w-4xl my-auto rounded-lg overflow-hidden"
+        style={{ background: T.panel, border: `1px solid ${T.panelBorder}`, boxShadow: `0 0 44px ${T.royalBlue}66` }}
+        initial={{ scale: 0.96, y: 12 }} animate={{ scale: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 260, damping: 24 }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center gap-2.5 px-4 py-3"
+          style={{ borderBottom: `1px solid ${T.panelBorder}`, background: `linear-gradient(90deg, ${T.royalBlue}30, transparent)` }}>
+          <span className="text-base">🎤</span>
+          <span className="text-[14px] font-bold tracking-[0.22em]" style={{ color: "#fff" }}>VIP TOUR DEFENSE</span>
+          <span className="text-[12px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+            style={{ background: `${T.babyBlue}18`, border: `1px solid ${T.babyBlue}45`, color: T.babyBlue }}>{VIP_EVENTS.length}</span>
+          <button onClick={onClose} aria-label="Close"
+            className="ml-auto w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 transition-colors"
+            style={{ color: T.silver }}>✕</button>
+        </div>
+
+        {/* Body */}
+        <div className="p-4 flex flex-col gap-3.5 max-h-[82vh] overflow-y-auto">
+          <p className="text-[13px] leading-relaxed" style={{ color: T.silver }}>
+            <span className="font-bold" style={{ color: GOLD }}>El Guardián&apos;s next missions.</span>{" "}
+            VIP artist tours draw the same scam surge as the World Cup — fake presales, resale fraud,
+            bogus VIP passes. Find your artist and get an <span style={{ color: T.babyBlue }}>instant, tailored
+            safety briefing</span> from El Guardián.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {VIP_EVENTS.map((e, i) => (
+              <EventCard key={e.id} e={e} accent={EVENT_ACCENTS[i % EVENT_ACCENTS.length]} onAsk={onAsk} />
+            ))}
+          </div>
+          <p className="text-[11px] tracking-wider text-center" style={{ color: T.silverDim }}>
+            Curated VIP watch profiles · your artist not here? Ask El Guardián about any show.
+          </p>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -1008,6 +1132,7 @@ export default function CyberShieldCommandCenter() {
   const [rightTab, setRightTab] = useState<"standings" | "fixtures" | "news">("news");
   const [centerTab, setCenterTab] = useState<"guardian" | "goalie">("guardian");
   const [showMissions, setShowMissions] = useState(false);
+  const [showEvents, setShowEvents] = useState(false);
   const primaryMission = MISSIONS[0];
   const mh = primaryMission?.headline;
 
@@ -1127,6 +1252,24 @@ export default function CyberShieldCommandCenter() {
     setRightTab("news");
     runSignal(headline);
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // The VIP-tour hook — a fan taps their artist and El Guardián delivers a
+  // live, tailored safety briefing right in the console. This is the funnel:
+  // fandom → CyberShield.
+  const askForEvent = (e: VipEvent) => {
+    const q =
+      `I'm going to a ${e.artist} concert. What scams are targeting ${e.artist} fans right now, ` +
+      `and how do I keep my tickets, money, and accounts safe?`;
+    setShowEvents(false);
+    setCenterTab("guardian");
+    // Defer the live read so the modal's exit animation finishes first —
+    // firing runSignal synchronously re-renders the tree mid-exit and freezes
+    // AnimatePresence, leaving an invisible full-screen overlay that traps clicks.
+    window.setTimeout(() => {
+      runSignal(q);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 280);
   };
 
   return (
@@ -1252,13 +1395,19 @@ export default function CyberShieldCommandCenter() {
                 <span className="ml-auto text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
                   style={{ background: `${T.neonGreen}18`, border: `1px solid ${T.neonGreen}45`, color: T.neonGreen }}>HQ</span>
               </button>
-              {/* Mission Selector — secondary targeting style */}
-              <motion.button whileHover={{ x: 3 }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-sm transition-colors hover:bg-white/5"
-                style={{ border: `1px dashed ${T.royalLight}66` }}>
-                <Crosshair className="w-3.5 h-3.5" style={{ color: T.royalLight }} />
-                <span className="text-[13px] tracking-[0.22em]" style={{ color: T.silver }}>MISSION SELECTOR</span>
-                <ChevronRight className="ml-auto w-3 h-3" style={{ color: T.silverDim }} />
+              {/* VIP Tour Defense — the next-mission funnel that drives fans in */}
+              <motion.button whileHover={{ x: 3 }} onClick={() => setShowEvents(true)}
+                className="relative w-full flex items-center gap-2.5 px-3 py-2 rounded-sm overflow-hidden transition-all hover:brightness-125"
+                style={{
+                  background: `linear-gradient(90deg, ${GOLD}20, ${T.royalBlue}22 70%, transparent)`,
+                  border: `1px solid ${GOLD}66`,
+                  boxShadow: `0 0 12px ${GOLD}22`,
+                }}>
+                <span className="absolute left-0 top-0 bottom-0 w-[3px]" style={{ background: GOLD, boxShadow: `0 0 8px ${GOLD}` }} />
+                <span className="text-[13px]">🎤</span>
+                <span className="text-[13px] font-bold tracking-[0.18em]" style={{ color: "#fff" }}>VIP TOUR DEFENSE</span>
+                <span className="ml-auto text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                  style={{ background: `${GOLD}20`, border: `1px solid ${GOLD}55`, color: GOLD }}>{VIP_EVENTS.length}</span>
               </motion.button>
             </div>
           </Panel>
@@ -1825,6 +1974,7 @@ export default function CyberShieldCommandCenter() {
       </div>
 
       <CompletedMissions open={showMissions} onClose={() => setShowMissions(false)} />
+      <VipTours open={showEvents} onClose={() => setShowEvents(false)} onAsk={askForEvent} />
     </div>
   );
 }
