@@ -39,12 +39,19 @@ export type VipEvent = {
   genre: string;
   reach: string[];   // languages & regions the defense is tuned for
   scams: ConcertScam[];
+  // Optional artist image. Drop a file at public/artists/<id>.(jpg|png|webp)
+  // and set this to its path — the card renders photo-forward. If omitted or
+  // the file is missing, the card falls back to the accent/flag treatment.
+  // Portrait/3:4 crops look best (recommended ~640×800). Use images you have
+  // rights to; the site is public.
+  image?: string;
 };
 
 // Newest / highest-priority first. VIP artists only.
 export const VIP_EVENTS: VipEvent[] = [
   {
     id: "karol-g",
+    image: "/artists/karol-g.jpg",
     artist: "Karol G",
     flag: "🇨🇴",
     origin: "Colombia",
@@ -54,6 +61,7 @@ export const VIP_EVENTS: VipEvent[] = [
   },
   {
     id: "bad-bunny",
+    image: "/artists/bad-bunny.jpg",
     artist: "Bad Bunny",
     flag: "🇵🇷",
     origin: "Puerto Rico",
@@ -63,6 +71,7 @@ export const VIP_EVENTS: VipEvent[] = [
   },
   {
     id: "beyonce",
+    image: "/artists/beyonce.jpg",
     artist: "Beyoncé",
     flag: "🇺🇸",
     origin: "United States",
@@ -72,6 +81,7 @@ export const VIP_EVENTS: VipEvent[] = [
   },
   {
     id: "taylor-swift",
+    image: "/artists/taylor-swift.jpg",
     artist: "Taylor Swift",
     flag: "🇺🇸",
     origin: "United States",
@@ -81,6 +91,7 @@ export const VIP_EVENTS: VipEvent[] = [
   },
   {
     id: "shakira",
+    image: "/artists/shakira.jpg",
     artist: "Shakira",
     flag: "🇨🇴",
     origin: "Colombia",
@@ -90,6 +101,7 @@ export const VIP_EVENTS: VipEvent[] = [
   },
   {
     id: "christina-aguilera",
+    image: "/artists/christina-aguilera.jpg",
     artist: "Christina Aguilera",
     flag: "🇺🇸",
     origin: "United States",
@@ -99,6 +111,7 @@ export const VIP_EVENTS: VipEvent[] = [
   },
   {
     id: "peso-pluma",
+    image: "/artists/peso-pluma.jpg",
     artist: "Peso Pluma",
     flag: "🇲🇽",
     origin: "Mexico",
@@ -108,6 +121,7 @@ export const VIP_EVENTS: VipEvent[] = [
   },
   {
     id: "rauw-alejandro",
+    image: "/artists/rauw-alejandro.jpg",
     artist: "Rauw Alejandro",
     flag: "🇵🇷",
     origin: "Puerto Rico",
@@ -117,6 +131,7 @@ export const VIP_EVENTS: VipEvent[] = [
   },
   {
     id: "becky-g",
+    image: "/artists/becky-g.jpg",
     artist: "Becky G",
     flag: "🇺🇸",
     origin: "United States",
@@ -126,6 +141,7 @@ export const VIP_EVENTS: VipEvent[] = [
   },
   {
     id: "coldplay",
+    image: "/artists/coldplay.jpg",
     artist: "Coldplay",
     flag: "🇬🇧",
     origin: "United Kingdom",
@@ -135,6 +151,7 @@ export const VIP_EVENTS: VipEvent[] = [
   },
   {
     id: "the-weeknd",
+    image: "/artists/the-weeknd.jpg",
     artist: "The Weeknd",
     flag: "🇨🇦",
     origin: "Canada",

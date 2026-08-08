@@ -139,8 +139,8 @@ const GOALIE_GREETING =
 const GOALIE_ASKS = [
   { label: "💸 'Sugar daddy' wants a gift card first", q: "Someone on Instagram offered to be my sugar daddy with a weekly allowance, but first I have to buy a $50 gift card to 'prove loyalty'. Is this a scam?" },
   { label: "💘 Match is asking me for money", q: "I met someone on a dating app, we really hit it off, and now they urgently need money for a family emergency. What do I do?" },
-  { label: "🎫 Cheap tickets DM — legit?", q: "Someone is DMing me half-price World Cup tickets but I have to pay by bank transfer today. Legit?" },
-  { label: "📱 'FIFA' dice que cancelaron mi boleto", q: "Me llegó un SMS de 'FIFA' diciendo que mi boleto fue cancelado y debo verificar mi tarjeta en 24 horas." },
+  { label: "🎫 Half-price concert tickets DM — real?", q: "Someone is DMing me half-price tickets to a sold-out concert but I have to pay by bank transfer today. Is this legit?" },
+  { label: "📱 SMS: 'tu boleto fue cancelado'", q: "Me llegó un SMS diciendo que mi boleto para el concierto fue cancelado y debo verificar mi tarjeta en 24 horas. ¿Es una estafa?" },
 ];
 
 // Delivered to every fan who shares a story — they just trained the Goalie.
@@ -213,10 +213,10 @@ function stripSignature(text: string): string {
 }
 
 const AGENTS = [
-  { name: "Anti-Scammer Goalie",  gate: "Gate A", icon: "🥅", color: T.babyBlue,   match: /scam|phish|fraud|ticket|link|fake|verify/i },
-  { name: "Sideline Referee",     gate: "Gate B", icon: "⚖️",  color: "#7CB9E8",   match: /gdpr|compliance|data|privacy|transfer/i },
-  { name: "Red Card Sentinel",    gate: "Gate C", icon: "🛡️",  color: T.silver,    match: /deepfake|video|synthetic|media|manipulated/i },
-  { name: "Las Barras Bravas",    gate: "Gate D", icon: "📡",  color: T.royalLight, match: /ddos|traffic|spike|flood|surge|telemetry/i },
+  { name: "Anti-Scam Sentinel",       gate: "Gate A", icon: "🎣", color: T.babyBlue,   match: /scam|phish|fraud|ticket|link|fake|verify/i },
+  { name: "Compliance Sentinel",      gate: "Gate B", icon: "⚖️",  color: "#7CB9E8",   match: /gdpr|compliance|data|privacy|transfer/i },
+  { name: "Deepfake Sentinel",        gate: "Gate C", icon: "🎭", color: T.silver,    match: /deepfake|video|synthetic|media|manipulated/i },
+  { name: "Infrastructure Sentinel",  gate: "Gate D", icon: "📡",  color: T.royalLight, match: /ddos|traffic|spike|flood|surge|telemetry/i },
 ];
 
 // Tap-to-ask prompts — the interactive hook on the El Guardián console
@@ -548,7 +548,7 @@ function GoalieZone({ active }: { active: boolean }) {
     }
     const history = turns.map(t => ({ role: t.role, text: t.text }));
     const fileLabel = file ? `${fileKindIcon(fileKind(file))} ${file.name}` : undefined;
-    setTurns(t => [...t, { role: "user", text: text || "(sent a file for the Goalie to check)", file: fileLabel }]);
+    setTurns(t => [...t, { role: "user", text: text || "(sent a file for the Sentinel to check)", file: fileLabel }]);
     setMsg("");
     setAttached(null);
     setSending(true);
@@ -612,8 +612,8 @@ function GoalieZone({ active }: { active: boolean }) {
 
       {/* Goalie header */}
       <div className="flex items-center gap-2 flex-shrink-0 px-1">
-        <span className="text-base">🥅</span>
-        <span className="text-[13px] font-black tracking-[0.2em]" style={{ color: "#fff" }}>ANTI-SCAMMER GOALIE</span>
+        <span className="text-base">🎣</span>
+        <span className="text-[13px] font-black tracking-[0.2em]" style={{ color: "#fff" }}>ANTI-SCAM SENTINEL</span>
         <span className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
           style={{ background: `${T.babyBlue}15`, border: `1px solid ${T.babyBlue}50`, color: T.babyBlue }}>GATE A</span>
         <span className="ml-auto text-[11px] tracking-[0.14em]" style={{ color: T.silverDim }}>
@@ -627,7 +627,7 @@ function GoalieZone({ active }: { active: boolean }) {
         <span className="text-[14px] flex-shrink-0">🤝</span>
         <span className="text-[13px] leading-relaxed" style={{ color: T.silver }}>
           <span className="font-bold" style={{ color: GOLD }}>Community mission — </span>
-          every story you share trains the Goalie and protects the next person.
+          every story you share trains the Sentinel and protects the next person.
           <span style={{ color: GOLD }}> Tu historia protege a la próxima familia. 💙</span>
         </span>
       </div>
@@ -655,8 +655,8 @@ function GoalieZone({ active }: { active: boolean }) {
                 <div className="max-w-[88%] px-3.5 py-2.5 rounded-2xl rounded-bl-md"
                   style={{ background: `${T.babyBlue}0D`, border: `1px solid ${T.babyBlue}35` }}>
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <span className="text-[13px]">🥅</span>
-                    <span className="text-[11px] font-bold tracking-[0.2em]" style={{ color: T.babyBlue }}>GOALIE</span>
+                    <span className="text-[13px]">🎣</span>
+                    <span className="text-[11px] font-bold tracking-[0.2em]" style={{ color: T.babyBlue }}>SENTINEL</span>
                     {(t.matches ?? 0) > 0 && (
                       <span className="text-[11px] font-bold tracking-wider px-1.5 py-0.5 rounded-full"
                         style={{ background: `${GOLD}18`, border: `1px solid ${GOLD}50`, color: GOLD }}>
@@ -673,7 +673,7 @@ function GoalieZone({ active }: { active: boolean }) {
             <div className="flex items-center gap-2 text-[13px]" style={{ color: T.silverDim }}>
               <div className="w-3 h-3 border-2 border-t-transparent rounded-full animate-spin"
                 style={{ borderColor: T.babyBlue, borderTopColor: "transparent" }} />
-              The Goalie is reading the play…
+              The Sentinel is analyzing…
             </div>
           )}
           {/* Share-to-wall CTA — appears once the tester has told their story, so
@@ -753,9 +753,9 @@ function GoalieZone({ active }: { active: boolean }) {
                 className="px-4 py-3 rounded-lg text-center"
                 style={{ background: `linear-gradient(135deg, ${GOLD}14, ${T.babyBlue}0E)`, border: `1px solid ${GOLD}55`, boxShadow: `0 0 24px ${GOLD}20` }}>
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.1 }}
-                  className="text-xl mb-1">🧤</motion.div>
+                  className="text-xl mb-1">🛡️</motion.div>
                 <div className="text-[13px] font-black tracking-[0.24em] mb-2" style={{ color: GOLD }}>
-                  THE GOALIE&apos;S PROMISE
+                  THE SENTINEL&apos;S PROMISE
                 </div>
                 <div className="space-y-1 mb-2">
                   {GOALIE_MANIFESTO.map((line, i) => (
@@ -778,7 +778,7 @@ function GoalieZone({ active }: { active: boolean }) {
                 </motion.div>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }}
                   className="text-[11px] tracking-wider mt-1.5" style={{ color: T.silverDim }}>
-                  — THE ANTI-SCAMMER GOALIE · WITH RAÍCES CYBER &amp; OUR BETA TESTERS
+                  — THE ANTI-SCAM SENTINEL · WITH RAÍCES CYBER &amp; OUR BETA TESTERS
                 </motion.div>
                 <button onClick={() => { setShowReport(false); setSubmitState("idle"); }}
                   className="mt-2 px-3 py-1 text-[12px] font-bold tracking-[0.14em] rounded-md transition-transform hover:scale-[1.03]"
@@ -986,6 +986,23 @@ function CompletedMissions({ open, onClose }: { open: boolean; onClose: () => vo
                 anonymized mission data — no personal information leaves the vault.
               </p>
               {MISSIONS.map(m => <MissionCard key={m.id} m={m} />)}
+
+              {/* Flagship threat-intel white paper — the research behind the mission */}
+              <a href="/white-paper-wc2026.html" target="_blank" rel="noopener noreferrer"
+                className="group flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:brightness-110"
+                style={{ background: `linear-gradient(90deg, ${GOLD}18, ${T.royalBlue}22 70%, transparent)`, border: `1px solid ${GOLD}55` }}>
+                <span className="text-xl flex-shrink-0">📄</span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13px] font-bold tracking-wide" style={{ color: "#fff" }}>
+                    Threat-Intelligence White Paper
+                  </div>
+                  <div className="text-[12px]" style={{ color: T.silverDim }}>
+                    FIFA World Cup 2026 cyber-threat landscape — the research behind the mission
+                  </div>
+                </div>
+                <span className="text-[11px] font-bold tracking-widest px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0 transition-transform group-hover:translate-x-0.5"
+                  style={{ background: `${GOLD}20`, border: `1px solid ${GOLD}66`, color: GOLD }}>READ ↗</span>
+              </a>
             </div>
           </motion.div>
         </motion.div>
@@ -1000,31 +1017,64 @@ const EVENT_ACCENTS = [
 ];
 
 function EventCard({ e, accent, onAsk }: { e: VipEvent; accent: string; onAsk: (e: VipEvent) => void }) {
+  // Photo-forward: the artist image is the hero of the card. If it's missing or
+  // fails to load, fall back to the accent + oversized flag treatment so the
+  // card still reads as intentional while images are being sourced.
+  const [imgOk, setImgOk] = useState(Boolean(e.image));
+
   return (
     <motion.div
       whileHover={{ y: -3, scale: 1.012 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="rounded-lg overflow-hidden flex flex-col"
+      className="group rounded-xl overflow-hidden flex flex-col"
       style={{
-        background: `linear-gradient(150deg, ${accent}22, ${T.royalBlue}10 58%, transparent)`,
+        background: `linear-gradient(160deg, ${accent}1A, ${T.royalBlue}10 60%, transparent)`,
         border: `1px solid ${accent}55`,
+        boxShadow: `0 0 0 1px ${accent}14, 0 10px 30px -12px ${accent}55`,
       }}
     >
-      <span className="block h-[3px] w-full" style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }} />
-      <div className="p-3.5 flex flex-col gap-3 flex-1">
-        {/* Artist header */}
-        <div className="flex items-center gap-2.5">
-          <span className="text-2xl leading-none flex-shrink-0">{e.flag}</span>
-          <div className="min-w-0">
-            <div className="text-[15px] font-bold tracking-wide truncate" style={{ color: "#fff" }}>{e.artist}</div>
-            <div className="text-[12px] truncate" style={{ color: T.silverDim }}>{e.genre} · {e.origin}</div>
+      {/* Hero — artist photo (or fallback) with a poster-style name overlay */}
+      <div className="relative w-full overflow-hidden" style={{ aspectRatio: "4 / 5" }}>
+        {imgOk && e.image ? (
+          <img
+            src={e.image}
+            alt={e.artist}
+            loading="lazy"
+            onError={() => setImgOk(false)}
+            className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.06]"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center"
+            style={{ background: `radial-gradient(120% 120% at 50% 0%, ${accent}44, ${T.royalBlue}22 55%, #050b16)` }}>
+            <span className="text-[92px] leading-none opacity-60 select-none transition-transform duration-500 group-hover:scale-[1.06]">{e.flag}</span>
           </div>
-          <span className="ml-auto text-[11px] font-bold tracking-widest px-2 py-0.5 rounded-full whitespace-nowrap"
-            style={{ background: `${accent}1E`, border: `1px solid ${accent}66`, color: accent }}>
-            UPCOMING
-          </span>
-        </div>
+        )}
 
+        {/* Top accent hairline */}
+        <span className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }} />
+
+        {/* UPCOMING badge */}
+        <span className="absolute top-2.5 right-2.5 text-[11px] font-bold tracking-widest px-2 py-0.5 rounded-full whitespace-nowrap backdrop-blur-sm"
+          style={{ background: "rgba(5,11,22,0.55)", border: `1px solid ${accent}88`, color: accent }}>
+          UPCOMING
+        </span>
+
+        {/* Bottom scrim so the name is always legible over any image */}
+        <div className="absolute inset-x-0 bottom-0 h-[62%] pointer-events-none"
+          style={{ background: "linear-gradient(to top, rgba(3,8,16,0.96) 8%, rgba(3,8,16,0.72) 42%, transparent)" }} />
+
+        {/* Poster-type name block */}
+        <div className="absolute inset-x-0 bottom-0 p-3.5 flex items-end gap-2">
+          <span className="text-2xl leading-none flex-shrink-0 drop-shadow">{e.flag}</span>
+          <div className="min-w-0">
+            <div className="text-[19px] font-extrabold leading-tight tracking-wide truncate"
+              style={{ color: "#fff", textShadow: "0 2px 12px rgba(0,0,0,0.6)" }}>{e.artist}</div>
+            <div className="text-[12px] truncate" style={{ color: accent }}>{e.genre} · {e.origin}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-3.5 flex flex-col gap-3 flex-1">
         {/* Threat profile — what El Guardián defends against */}
         <div className="flex flex-col gap-1.5">
           <div className="text-[11px] tracking-[0.16em] uppercase" style={{ color: T.silverDim }}>El Guardián defends against</div>
@@ -1062,64 +1112,11 @@ function EventCard({ e, accent, onAsk }: { e: VipEvent; accent: string; onAsk: (
   );
 }
 
-function VipTours({ open, onClose, onAsk }: { open: boolean; onClose: () => void; onAsk: (e: VipEvent) => void }) {
-  // Render nothing when closed so the overlay unmounts instantly and can never
-  // linger as an invisible click-trap. Enter animation is kept via motion; no
-  // exit animation (AnimatePresence's exit-removal was failing to unmount here).
-  if (!open) return null;
-  return (
-    <motion.div
-      className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 overflow-y-auto"
-      style={{ background: "rgba(2,7,14,0.8)", backdropFilter: "blur(4px)" }}
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-      onClick={onClose}
-    >
-      <motion.div
-        className="w-full max-w-4xl my-auto rounded-lg overflow-hidden"
-        style={{ background: T.panel, border: `1px solid ${T.panelBorder}`, boxShadow: `0 0 44px ${T.royalBlue}66` }}
-        initial={{ scale: 0.96, y: 12 }} animate={{ scale: 1, y: 0 }}
-        transition={{ type: "spring", stiffness: 260, damping: 24 }}
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center gap-2.5 px-4 py-3"
-          style={{ borderBottom: `1px solid ${T.panelBorder}`, background: `linear-gradient(90deg, ${T.royalBlue}30, transparent)` }}>
-          <span className="text-base">🎤</span>
-          <span className="text-[14px] font-bold tracking-[0.22em]" style={{ color: "#fff" }}>VIP TOUR DEFENSE</span>
-          <span className="text-[12px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
-            style={{ background: `${T.babyBlue}18`, border: `1px solid ${T.babyBlue}45`, color: T.babyBlue }}>{VIP_EVENTS.length}</span>
-          <button onClick={onClose} aria-label="Close"
-            className="ml-auto w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 transition-colors"
-            style={{ color: T.silver }}>✕</button>
-        </div>
-
-        {/* Body */}
-        <div className="p-4 flex flex-col gap-3.5 max-h-[82vh] overflow-y-auto">
-          <p className="text-[13px] leading-relaxed" style={{ color: T.silver }}>
-            <span className="font-bold" style={{ color: GOLD }}>El Guardián&apos;s next missions.</span>{" "}
-            VIP artist tours draw the same scam surge as the World Cup — fake presales, resale fraud,
-            bogus VIP passes. Find your artist and get an <span style={{ color: T.babyBlue }}>instant, tailored
-            safety briefing</span> from El Guardián.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {VIP_EVENTS.map((e, i) => (
-              <EventCard key={e.id} e={e} accent={EVENT_ACCENTS[i % EVENT_ACCENTS.length]} onAsk={onAsk} />
-            ))}
-          </div>
-          <p className="text-[11px] tracking-wider text-center" style={{ color: T.silverDim }}>
-            Curated VIP watch profiles · your artist not here? Ask El Guardián about any show.
-          </p>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
 export default function CyberShieldCommandCenter() {
   const [input, setInput]     = useState("");
   const [query, setQuery]     = useState("");
   const [response, setResponse] = useState(
-    "El Guardián is ready to tackle any breach with knowledge, defense plays, and ways to keep you safe during the FIFA World Cup 2026!!"
+    "El Guardián is on duty — ready to break down any breach with clear guidance, defense plays, and practical ways to keep you safe. Drop a link, message, or offer to begin."
   );
   const [loading, setLoading]   = useState(false);
   const [attached, setAttached] = useState<File | null>(null);
@@ -1130,9 +1127,8 @@ export default function CyberShieldCommandCenter() {
   const [threatFeed, setThreatFeed] = useState<ThreatFeed | null>(null);
   const [intel, setIntel] = useState<IntelFeed | null>(null);
   const [rightTab, setRightTab] = useState<"standings" | "fixtures" | "news">("news");
-  const [centerTab, setCenterTab] = useState<"guardian" | "goalie">("guardian");
+  const [centerTab, setCenterTab] = useState<"guardian" | "goalie" | "tours">("guardian");
   const [showMissions, setShowMissions] = useState(false);
-  const [showEvents, setShowEvents] = useState(false);
   const primaryMission = MISSIONS[0];
   const mh = primaryMission?.headline;
 
@@ -1261,15 +1257,13 @@ export default function CyberShieldCommandCenter() {
     const q =
       `I'm going to a ${e.artist} concert. What scams are targeting ${e.artist} fans right now, ` +
       `and how do I keep my tickets, money, and accounts safe?`;
-    setShowEvents(false);
     setCenterTab("guardian");
-    // Defer the live read so the modal's exit animation finishes first —
-    // firing runSignal synchronously re-renders the tree mid-exit and freezes
-    // AnimatePresence, leaving an invisible full-screen overlay that traps clicks.
+    // Defer the live read one tick so the tab switch to the guardian console
+    // renders before the response streams in.
     window.setTimeout(() => {
       runSignal(q);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 280);
+    }, 60);
   };
 
   return (
@@ -1395,8 +1389,8 @@ export default function CyberShieldCommandCenter() {
                 <span className="ml-auto text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
                   style={{ background: `${T.neonGreen}18`, border: `1px solid ${T.neonGreen}45`, color: T.neonGreen }}>HQ</span>
               </button>
-              {/* VIP Tour Defense — the next-mission funnel that drives fans in */}
-              <motion.button whileHover={{ x: 3 }} onClick={() => setShowEvents(true)}
+              {/* Missions Completed — opens the after-action report archive */}
+              <motion.button whileHover={{ x: 3 }} onClick={() => setShowMissions(true)}
                 className="relative w-full flex items-center gap-2.5 px-3 py-2 rounded-sm overflow-hidden transition-all hover:brightness-125"
                 style={{
                   background: `linear-gradient(90deg, ${GOLD}20, ${T.royalBlue}22 70%, transparent)`,
@@ -1404,10 +1398,10 @@ export default function CyberShieldCommandCenter() {
                   boxShadow: `0 0 12px ${GOLD}22`,
                 }}>
                 <span className="absolute left-0 top-0 bottom-0 w-[3px]" style={{ background: GOLD, boxShadow: `0 0 8px ${GOLD}` }} />
-                <span className="text-[13px]">🎤</span>
-                <span className="text-[13px] font-bold tracking-[0.18em]" style={{ color: "#fff" }}>VIP TOUR DEFENSE</span>
+                <span className="text-[13px]">🏆</span>
+                <span className="text-[13px] font-bold tracking-[0.18em]" style={{ color: "#fff" }}>MISSIONS COMPLETED</span>
                 <span className="ml-auto text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
-                  style={{ background: `${GOLD}20`, border: `1px solid ${GOLD}55`, color: GOLD }}>{VIP_EVENTS.length}</span>
+                  style={{ background: `${GOLD}20`, border: `1px solid ${GOLD}55`, color: GOLD }}>{MISSIONS.length}</span>
               </motion.button>
             </div>
           </Panel>
@@ -1451,18 +1445,26 @@ export default function CyberShieldCommandCenter() {
                       ) : (
                         <div className="text-[12px] tracking-widest mt-0.5" style={{ color: agent.color }}>● ACTIVE · {agent.gate}</div>
                       )}
-                      {/* live threat-load bar */}
-                      <div className="mt-1.5 flex items-center gap-1.5">
-                        <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: `${T.royalBlue}40` }}>
-                          <motion.div className="h-full rounded-full"
-                            animate={{ width: `${loadedThreatTotal ? (liveCount / loadedThreatTotal) * 100 : 0}%` }}
-                            transition={{ duration: 0.6, ease: "easeOut" }}
-                            style={{ background: agent.color, boxShadow: `0 0 6px ${agent.color}` }} />
+                      {/* live threat-load bar — or an honest 'standing watch' idle state */}
+                      {loadedThreatTotal ? (
+                        <div className="mt-1.5 flex items-center gap-1.5">
+                          <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: `${T.royalBlue}40` }}>
+                            <motion.div className="h-full rounded-full"
+                              animate={{ width: `${(liveCount / loadedThreatTotal) * 100}%` }}
+                              transition={{ duration: 0.6, ease: "easeOut" }}
+                              style={{ background: agent.color, boxShadow: `0 0 6px ${agent.color}` }} />
+                          </div>
+                          <span className="text-[11px] font-mono flex-shrink-0 w-6 text-right" style={{ color: T.silverDim }}>
+                            {Math.round((liveCount / loadedThreatTotal) * 100)}%
+                          </span>
                         </div>
-                        <span className="text-[11px] font-mono flex-shrink-0 w-6 text-right" style={{ color: T.silverDim }}>
-                          {loadedThreatTotal ? Math.round((liveCount / loadedThreatTotal) * 100) : 0}%
-                        </span>
-                      </div>
+                      ) : (
+                        <div className="mt-1.5 flex items-center gap-1.5">
+                          <motion.span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: agent.color }}
+                            animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} />
+                          <span className="text-[10px] tracking-[0.18em]" style={{ color: T.silverDim }}>STANDING WATCH</span>
+                        </div>
+                      )}
                     </div>
                     {liveCount > 0 ? (
                       <span className="flex-shrink-0 flex flex-col items-center justify-center px-1.5 py-0.5 rounded-md"
@@ -1520,23 +1522,31 @@ export default function CyberShieldCommandCenter() {
               <div className="absolute left-0 right-0 top-1/2" style={{ borderTop: `1.5px solid ${T.babyBlue}0A` }} />
             </div>
 
-            {/* Center tab switch — El Guardián console vs Goalie chat */}
-            <div className="relative z-10 w-full max-w-[680px] flex-shrink-0 grid grid-cols-2 gap-1 p-1 rounded-lg mb-2"
+            {/* Center tab switch — El Guardián · Tour Defense · Goalie chat */}
+            <div className="relative z-10 w-full max-w-[680px] flex-shrink-0 grid grid-cols-3 gap-1 p-1 rounded-lg mb-2"
               style={{ background: T.panel, border: `1px solid ${T.royalBlue}55` }}>
-              {([["guardian", "EL GUARDIÁN"], ["goalie", "GOALIE CHAT"]] as const).map(([key, label]) => {
+              {([["guardian", "EL GUARDIÁN"], ["tours", "TOUR DEFENSE"], ["goalie", "SCAM CHECK CHAT"]] as const).map(([key, label]) => {
                 const active = centerTab === key;
                 const markColor = active ? "#04101f" : T.silverDim;
                 return (
                   <button key={key} onClick={() => setCenterTab(key)}
-                    className="py-1.5 rounded-md text-[13px] font-bold tracking-[0.16em] transition-all flex items-center justify-center gap-1.5"
+                    className="py-1.5 px-1 rounded-md text-[12px] font-bold tracking-[0.08em] transition-all flex items-center justify-center gap-1"
                     style={active
                       ? { background: `linear-gradient(135deg, ${T.babyBlue}, ${T.royalLight})`, color: "#04101f", boxShadow: `0 0 14px ${T.babyBlue}45` }
                       : { color: T.silverDim }}>
-                    <EagleMark size={13} color={markColor} glow={active ? "#04101f" : T.babyBlue} />
-                    {label}
+                    {key === "tours"
+                      ? <span className="text-[13px] leading-none">🎤</span>
+                      : <EagleMark size={13} color={markColor} glow={active ? "#04101f" : T.babyBlue} />}
+                    <span className="truncate">{label}</span>
                     {key === "goalie" && !active && (
-                      <span className="ml-0.5 text-[11px] font-bold px-1 py-0.5 rounded-full"
+                      <span className="text-[10px] font-bold px-1 py-0.5 rounded-full"
                         style={{ background: `${GOLD}20`, color: GOLD }}>BETA</span>
+                    )}
+                    {key === "tours" && (
+                      <span className="text-[10px] font-bold px-1 py-0.5 rounded-full leading-none"
+                        style={active
+                          ? { background: "rgba(4,16,31,0.22)", color: "#04101f" }
+                          : { background: `${GOLD}20`, color: GOLD }}>{VIP_EVENTS.length}</span>
                     )}
                   </button>
                 );
@@ -1555,7 +1565,7 @@ export default function CyberShieldCommandCenter() {
                   CYBERSHIELD <span style={{ color: T.babyBlue }}>AI</span>
                 </h1>
                 <div className="flex items-center gap-2 mt-1.5">
-                  <p className="text-[12px] tracking-[0.24em] font-bold" style={{ color: T.babyBlue }}>EL GUARDIÁN · WORLD CUP 2026 DEFENSE</p>
+                  <p className="text-[12px] tracking-[0.24em] font-bold" style={{ color: T.babyBlue }}>EL GUARDIÁN · WORLDWIDE EVENTS &amp; CONCERTS DEFENSE</p>
                   <span className="flex items-center gap-1.5 text-[11px] font-bold tracking-widest px-2 py-0.5 rounded-full"
                     style={{ background: `${posture.color}15`, border: `1px solid ${posture.color}55`, color: posture.color }}>
                     <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: posture.color }} />
@@ -1636,7 +1646,7 @@ export default function CyberShieldCommandCenter() {
                                 <div className="flex items-center gap-2 mb-1.5">
                                   <EagleMark size={14} color={a.color} glow={a.color} />
                                   <span className="text-[12px] tracking-[0.25em] font-bold" style={{ color: a.color }}>
-                                    {r.agent.toUpperCase()} · {r.gate.toUpperCase()}
+                                    {a.name.toUpperCase()} · {r.gate.toUpperCase()}
                                   </span>
                                   <span className="text-[11px] px-1.5 py-0.5 rounded-sm font-bold tracking-widest"
                                     style={{ background: `${a.color}18`, border: `1px solid ${a.color}40`, color: a.color }}>
@@ -1695,6 +1705,30 @@ export default function CyberShieldCommandCenter() {
                 </motion.button>
               </div>
 
+            </div>
+
+            {/* Tour Defense — VIP artist watch profiles, now a first-class center tab */}
+            <div className={`relative z-10 w-full max-w-[680px] flex-1 min-h-0 overflow-y-auto cs-scroll flex-col ${centerTab === "tours" ? "flex" : "hidden"}`}>
+              <div className="flex items-center gap-2.5 mb-2 flex-shrink-0">
+                <span className="text-base">🎤</span>
+                <span className="text-[14px] font-bold tracking-[0.22em]" style={{ color: "#fff" }}>VIP TOUR DEFENSE</span>
+                <span className="text-[12px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
+                  style={{ background: `${T.babyBlue}18`, border: `1px solid ${T.babyBlue}45`, color: T.babyBlue }}>{VIP_EVENTS.length}</span>
+              </div>
+              <p className="text-[13px] leading-relaxed mb-3 flex-shrink-0" style={{ color: T.silver }}>
+                <span className="font-bold" style={{ color: GOLD }}>El Guardián&apos;s next missions.</span>{" "}
+                VIP artist tours draw the same scam surge as major events — fake presales, resale fraud,
+                bogus VIP passes. Find your artist and get an <span style={{ color: T.babyBlue }}>instant, tailored
+                safety briefing</span> from El Guardián.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {VIP_EVENTS.map((e, i) => (
+                  <EventCard key={e.id} e={e} accent={EVENT_ACCENTS[i % EVENT_ACCENTS.length]} onAsk={askForEvent} />
+                ))}
+              </div>
+              <p className="text-[11px] tracking-wider text-center mt-3 flex-shrink-0" style={{ color: T.silverDim }}>
+                Curated VIP watch profiles · your artist not here? Ask El Guardián about any show.
+              </p>
             </div>
 
             <GoalieZone active={centerTab === "goalie"} />
@@ -1974,7 +2008,6 @@ export default function CyberShieldCommandCenter() {
       </div>
 
       <CompletedMissions open={showMissions} onClose={() => setShowMissions(false)} />
-      <VipTours open={showEvents} onClose={() => setShowEvents(false)} onAsk={askForEvent} />
     </div>
   );
 }
