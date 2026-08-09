@@ -1525,7 +1525,7 @@ export default function CyberShieldCommandCenter() {
             {/* Center tab switch — El Guardián · Tour Defense · Goalie chat */}
             <div className="relative z-10 w-full max-w-[680px] flex-shrink-0 grid grid-cols-3 gap-1 p-1 rounded-lg mb-2"
               style={{ background: T.panel, border: `1px solid ${T.royalBlue}55` }}>
-              {([["guardian", "EL GUARDIÁN"], ["tours", "TOUR DEFENSE"], ["goalie", "SCAM CHECK CHAT"]] as const).map(([key, label]) => {
+              {([["guardian", "EL GUARDIÁN"], ["tours", "FANS AUTHENTICATOR"], ["goalie", "GOT SCAMMED?"]] as const).map(([key, label]) => {
                 const active = centerTab === key;
                 const markColor = active ? "#04101f" : T.silverDim;
                 return (
@@ -1711,7 +1711,7 @@ export default function CyberShieldCommandCenter() {
             <div className={`relative z-10 w-full max-w-[680px] flex-1 min-h-0 overflow-y-auto cs-scroll flex-col ${centerTab === "tours" ? "flex" : "hidden"}`}>
               <div className="flex items-center gap-2.5 mb-2 flex-shrink-0">
                 <span className="text-base">🎤</span>
-                <span className="text-[14px] font-bold tracking-[0.22em]" style={{ color: "#fff" }}>VIP TOUR DEFENSE</span>
+                <span className="text-[14px] font-bold tracking-[0.22em]" style={{ color: "#fff" }}>FANS AUTHENTICATOR</span>
                 <span className="text-[12px] font-bold tracking-widest px-1.5 py-0.5 rounded-full"
                   style={{ background: `${T.babyBlue}18`, border: `1px solid ${T.babyBlue}45`, color: T.babyBlue }}>{VIP_EVENTS.length}</span>
               </div>
@@ -1966,7 +1966,7 @@ export default function CyberShieldCommandCenter() {
         </div>
       </div>
 
-      {/* footer — World Cup ticker + beta feedback button */}
+      {/* footer — mission & tour ticker + beta feedback button */}
       <div className="flex items-center gap-3 flex-shrink-0 py-1 pr-1"
         style={{ borderTop: `1px solid ${T.royalBlue}40` }}>
         <div className="relative overflow-hidden flex-1 min-w-0">
@@ -1974,18 +1974,19 @@ export default function CyberShieldCommandCenter() {
             {[0, 1].map(k => (
               <span key={k} className="flex items-center">
                 {[
-                  "MISSION 1 COMPLETE", "FIFA WORLD CUP 2026 · JUN 11 — JUL 19",
-                  "NEXT MISSION · SUPER BOWL LXI · FEB 2027", "ROAD TO LA 2028 OLYMPICS",
-                  "48 TEAMS", "104 MATCHES", "16 HOST CITIES",
-                  "ATLANTA", "BOSTON", "DALLAS", "GUADALAJARA", "HOUSTON", "KANSAS CITY", "LOS ANGELES",
-                  "MEXICO CITY", "MIAMI", "MONTERREY", "NEW YORK / NEW JERSEY", "PHILADELPHIA",
-                  "SAN FRANCISCO", "SEATTLE", "TORONTO", "VANCOUVER",
+                  "MISSION 1 COMPLETE · FIFA WORLD CUP 2026",
+                  "NOW ON WATCH · WORLDWIDE EVENTS & CONCERTS",
+                  "NEXT MISSIONS · SUPER BOWL LXI · LA 2028 OLYMPICS · WORLD TOURS 2026",
+                  "FANS AUTHENTICATOR · 11 ARTISTS ON WATCH",
+                  "KAROL G", "BAD BUNNY", "BEYONCÉ", "TAYLOR SWIFT", "SHAKIRA",
+                  "CHRISTINA AGUILERA", "PESO PLUMA", "RAUW ALEJANDRO", "BECKY G",
+                  "COLDPLAY", "THE WEEKND",
                   "PROTECTED BY CYBERSHIELD AI — EL GUARDIÁN", "PC DIGITAL SOLUTIONS",
                   "THANK YOU RAÍCES CYBER ORGANIZATION 💙", "GRACIAS A NUESTROS BETA TESTERS 🙌",
                 ].map((item, i) => (
                   <span key={i} className="flex items-center">
                     <span className="px-3">{item}</span>
-                    <span style={{ color: T.babyBlue }}>⚽</span>
+                    <span style={{ color: T.babyBlue }}>🎤</span>
                   </span>
                 ))}
               </span>

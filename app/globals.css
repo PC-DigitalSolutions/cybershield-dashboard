@@ -25,13 +25,13 @@ body {
   font-family: var(--font-sans-custom), ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
-/* World Cup host-city ticker */
+/* Mission & tour ticker */
 @keyframes cs-ticker {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 .cs-ticker {
-  animation: cs-ticker 45s linear infinite;
+  animation: cs-ticker 80s linear infinite;
 }
 
 /* Hidden scrollbar — appears only on hover */
