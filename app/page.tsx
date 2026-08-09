@@ -528,7 +528,7 @@ function GoalieZone({ active }: { active: boolean }) {
   };
 
   const loadStories = () =>
-    fetch(`${API_BASE}/goalie/stories?limit=8`)
+    fetch(`${API_BASE}/sentinel/stories?limit=8`)
       .then(r => r.json())
       .then(setFeed)
       .catch(() => {});
@@ -559,9 +559,9 @@ function GoalieZone({ active }: { active: boolean }) {
         fd.append("file", file);
         fd.append("message", text);
         fd.append("history", JSON.stringify(history));
-        res = await fetch(`${API_BASE}/goalie/chat/file`, { method: "POST", body: fd });
+        res = await fetch(`${API_BASE}/sentinel/chat/file`, { method: "POST", body: fd });
       } else {
-        res = await fetch(`${API_BASE}/goalie/chat`, {
+        res = await fetch(`${API_BASE}/sentinel/chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: text, history }),
@@ -584,7 +584,7 @@ function GoalieZone({ active }: { active: boolean }) {
     if (!consent || storyText.trim().length < 20 || submitState === "sending") return;
     setSubmitState("sending");
     try {
-      const res = await fetch(`${API_BASE}/goalie/report`, {
+      const res = await fetch(`${API_BASE}/sentinel/report`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ story: storyText.trim(), scam_type: storyType, language: "", consent }),
