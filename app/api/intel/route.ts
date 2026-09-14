@@ -1,8 +1,14 @@
 // Live industry-intelligence feed — cybersecurity + AI headlines.
 // Server-side fetch of Google News RSS (no CORS), parsed to JSON.
 // Same source family the threat monitor uses; kept dependency-free.
-// Revalidated every 15 min so it's live without hammering the source.
-export const revalidate = 900;
+//
+// Runs on every request (Next 16 route handlers are dynamic by default).
+// We deliberately do NOT opt into the full-route/ISR cache here: on a
+// low-traffic site, ISR's stale-while-revalidate served headlines that
+// were hours — even a full day — old, because nothing was triggering
+// background revalidation. Fetching the RSS live per request keeps the
+// tiles genuinely current; the client only polls every 5 min anyway.
+export const dynamic = "force-dynamic";
 
 type IntelItem = {
   title: string;
@@ -44,7 +50,7 @@ export async function GET() {
   try {
     const res = await fetch(FEED_URL, {
       headers: { "User-Agent": "CyberShieldAI/1.0 (+https://pcdigitalsolutions.tech)" },
-      next: { revalidate },
+      cache: "no-store",
     });
     if (!res.ok) throw new Error(`upstream ${res.status}`);
     const xml = await res.text();
