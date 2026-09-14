@@ -49,3 +49,7 @@ next-env.d.ts
 
 # stray local backend artifact
 /data/
+
+# Higgsfield companion skills (installed per-project, not part of the dashboard)
+.agents/
+skills-lock.json
