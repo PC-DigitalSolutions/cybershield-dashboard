@@ -10,6 +10,14 @@
 // tiles genuinely current; the client only polls every 5 min anyway.
 export const dynamic = "force-dynamic";
 
+// Sent on every response so no CDN/browser layer holds onto a copy —
+// force-dynamic controls Next's own cache, not the HTTP headers the
+// client and edge see. Without this a long-open tab kept reading a
+// stale cached body instead of revalidating against the origin.
+const NO_STORE = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+} as const;
+
 type IntelItem = {
   title: string;
   link: string;
@@ -76,11 +84,14 @@ export async function GET() {
       };
     });
 
-    return Response.json({ status: "ok", count: items.length, items });
+    return Response.json(
+      { status: "ok", count: items.length, items },
+      { headers: NO_STORE }
+    );
   } catch (err) {
     return Response.json(
       { status: "error", count: 0, items: [], error: String(err) },
-      { status: 200 }
+      { status: 200, headers: NO_STORE }
     );
   }
 }

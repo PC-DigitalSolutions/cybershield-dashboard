@@ -1146,7 +1146,9 @@ export default function CyberShieldCommandCenter() {
   // Industry Pulse — live cyber + AI news via same-origin Next route (/api/intel).
   useEffect(() => {
     const load = () =>
-      fetch(`/api/intel`)
+      // Cache-bust + no-store: a long-open tab was re-reading a stale
+      // cached /api/intel instead of hitting the (dynamic) origin.
+      fetch(`/api/intel?t=${Date.now()}`, { cache: "no-store" })
         .then(r => r.json())
         .then(setIntel)
         .catch(() => {});
